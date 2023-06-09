@@ -1,5 +1,13 @@
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { assets, COLORS, SIZES, FONTS } from "../constants";
 import { Input } from "@rneui/themed";
 import { Button } from "@rneui/base";
@@ -10,7 +18,10 @@ type Props = {};
 
 const PasswordRestoration = (props: Props) => {
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
       <View
         style={{
           alignItems: "center",
@@ -46,7 +57,7 @@ const PasswordRestoration = (props: Props) => {
           }}
         />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

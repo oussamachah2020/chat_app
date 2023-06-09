@@ -9,6 +9,7 @@ import { SCREENS } from "./types/screens";
 import Register from "./screens/auth/Register";
 import Login from "./screens/auth/Login";
 import PasswordRestoration from "./screens/PasswordRestoration";
+import Home from "./screens/Chat/Home";
 
 const Stack = createStackNavigator();
 
@@ -48,6 +49,7 @@ export default function App() {
           name={SCREENS.RESTORATION_SCREEN}
           component={PasswordRestoration}
         />
+        <Stack.Screen name={SCREENS.HOME_SCREEN} component={Home} />
       </Stack.Navigator>
     </NavigationContainer>
   );

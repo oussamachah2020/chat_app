@@ -46,10 +46,10 @@ const styles = StyleSheet.create({
 
   description: {
     textAlign: "center",
-    marginHorizontal: 40,
+    marginHorizontal: 30,
 
     marginTop: 5,
     fontFamily: FONTS.medium,
-    fontSize: SIZES.large,
+    fontSize: SIZES.medium,
   },
 });

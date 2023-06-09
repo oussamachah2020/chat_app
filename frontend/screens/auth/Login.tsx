@@ -50,6 +50,7 @@ const Login = ({ navigation }: Props) => {
             borderRadius: 10,
             height: 50,
           }}
+          onPress={() => navigation.navigate(SCREENS.HOME_SCREEN)}
         />
       </View>
       <View
@@ -77,7 +78,7 @@ const Login = ({ navigation }: Props) => {
         titleStyle={{
           color: "black",
         }}
-        color={"#F4F3F3"}
+        color={"#E2E2E2"}
         icon={
           <Image
             source={assets.google}
