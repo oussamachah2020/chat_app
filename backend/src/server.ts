@@ -1,16 +1,20 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import router from "./routes/user.routes";
 
 dotenv.config();
 
-const app: Express = express();
+const app = express();
 const port = process.env.PORT;
 
-//--CORS MIDDLEWARE--
+// config the app
 app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 //--ROUTES--
+app.use("/api/users", router);
 
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
