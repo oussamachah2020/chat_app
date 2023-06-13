@@ -8,6 +8,13 @@ import AsyncHandler from "express-async-handler";
 
 const prisma = new PrismaClient();
 
+function randomIntFromInterval(min: number, max: number): number {
+  // min and max included
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+const randomNumber = randomIntFromInterval(1000, 9999);
+
 const createUser = AsyncHandler(
   async (req: Request, res: Response): Promise<any> => {
     const { fullName, email, password }: userDataType = req.body;
@@ -90,8 +97,27 @@ const getUser = AsyncHandler(
   }
 );
 
+const verifyUser = AsyncHandler(
+  async (req: Request, res: Response): Promise<any> => {
+    const { verificationCode, email } = req.body;
+
+    if (verificationCode === randomNumber) {
+      await prisma.user.update({
+        where: {
+          email,
+        },
+        data: { verified: true },
+      });
+
+      return res.status(200).json({ message: "Your account is verified !" });
+    } else {
+      return res.status(400).json({ message: "Incorrect code, try again !" });
+    }
+  }
+);
+
 const generateToken = (email: string) => {
   return sign({ email }, process.env.JWT_PUBLIC_KEY, { expiresIn: "1d" });
 };
 
-export { createUser, login, getUser };
+export { createUser, login, getUser, verifyUser, randomNumber };
