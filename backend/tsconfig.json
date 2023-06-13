@@ -10,10 +10,10 @@
     "declaration": true,
     "noImplicitAny": true,
     // "noUnusedLocals": false
-    "typeRoots": ["node_modules/@types", "./types"],
+    "typeRoots": ["./node_modules/@types", "./src/types"],
     "types": ["@types/node"]
   },
   "lib": ["es2016"],
-  "include": ["src/**/*", "src/types/env.d.ts"],
+  "include": ["src/**/*", "src/types/environment.d.ts"],
   "exclude": ["node_modules"]
 }

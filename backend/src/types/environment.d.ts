@@ -1,11 +1,12 @@
+export {};
+
 declare global {
-  namespace NodeJs {
+  namespace NodeJS {
     interface ProcessEnv {
-      NODE_ENV: string;
       PORT: number;
       JWT_PRIVATE_KEY: string;
       JWT_PUBLIC_KEY: string;
+      NODE_ENV: "test" | "dev" | "prod";
     }
   }
 }
-export {};
