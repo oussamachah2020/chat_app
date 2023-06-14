@@ -20,10 +20,9 @@ model User {
 }
 
 model Message {
-  id String @id @default(uuid())
+  id String @id
   content String
-  sender String @unique
+  sender String @unique()
   receiver String
   sent_at DateTime 
-  updated_at DateTime
 }
