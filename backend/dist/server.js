@@ -17,9 +17,9 @@ app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
 //--ROUTES--
-app.use("api/users", user_routes_1.default);
-app.use("api/notification", notification_routes_1.default);
-app.use("api/messages", messages_routes_1.default);
+app.use("/api/users", user_routes_1.default);
+app.use("/api/notification", notification_routes_1.default);
+app.use("/api/messages", messages_routes_1.default);
 app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });

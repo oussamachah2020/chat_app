@@ -35,12 +35,12 @@ const createUser = (0, express_async_handler_1.default)(async (req, res) => {
             password: hashedPassword,
             verified: false,
         },
-        select: { email: true },
+        select: { id: true },
     });
     if (newUser) {
         return res.status(201).json({
             message: "User created successfully",
-            token: generateToken(newUser.email),
+            token: generateToken(newUser.id),
         });
     }
 });
@@ -57,7 +57,7 @@ const login = (0, express_async_handler_1.default)(async (req, res) => {
         if (passwordsMatching) {
             return res.status(200).json({
                 message: `Welcome ${user.fullName}`,
-                access_token: generateToken(user.email),
+                access_token: generateToken(user.id),
             });
         }
         else {
@@ -74,11 +74,13 @@ const login = (0, express_async_handler_1.default)(async (req, res) => {
 });
 exports.login = login;
 const getUser = (0, express_async_handler_1.default)(async (req, res) => {
-    const { token } = req.body;
-    const userEmail = (0, jsonwebtoken_1.decode)(token)["email"];
     const userData = await prisma.user.findUnique({
         where: {
-            email: userEmail,
+            id: req.user,
+        },
+        select: {
+            fullName: true,
+            email: true,
         },
     });
     return res.status(200).json(userData);
@@ -100,7 +102,7 @@ const verifyUser = (0, express_async_handler_1.default)(async (req, res) => {
     }
 });
 exports.verifyUser = verifyUser;
-const generateToken = (email) => {
-    return (0, jsonwebtoken_1.sign)({ email }, process.env.JWT_PUBLIC_KEY, { expiresIn: "1d" });
+const generateToken = (id) => {
+    return (0, jsonwebtoken_1.sign)({ id }, process.env.JWT_PUBLIC_KEY, { expiresIn: "1d" });
 };
 //# sourceMappingURL=user.controller.js.map

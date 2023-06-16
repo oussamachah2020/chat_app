@@ -39,13 +39,13 @@ const createUser = AsyncHandler(
         password: hashedPassword,
         verified: false,
       },
-      select: { email: true },
+      select: { id: true },
     });
 
     if (newUser) {
       return res.status(201).json({
         message: "User created successfully",
-        token: generateToken(newUser.email),
+        token: generateToken(newUser.id),
       });
     }
   }
@@ -67,7 +67,7 @@ const login = AsyncHandler(
       if (passwordsMatching) {
         return res.status(200).json({
           message: `Welcome ${user.fullName}`,
-          access_token: generateToken(user.email),
+          access_token: generateToken(user.id),
         });
       } else {
         return res.status(400).json({
@@ -84,13 +84,13 @@ const login = AsyncHandler(
 
 const getUser = AsyncHandler(
   async (req: Request, res: Response): Promise<any> => {
-    const { token } = req.body;
-
-    const userEmail = decode(token)["email"];
-
     const userData = await prisma.user.findUnique({
       where: {
-        email: userEmail,
+        id: req.user,
+      },
+      select: {
+        fullName: true,
+        email: true,
       },
     });
     return res.status(200).json(userData);
@@ -116,8 +116,8 @@ const verifyUser = AsyncHandler(
   }
 );
 
-const generateToken = (email: string) => {
-  return sign({ email }, process.env.JWT_PUBLIC_KEY, { expiresIn: "1d" });
+const generateToken = (id: string) => {
+  return sign({ id }, process.env.JWT_PUBLIC_KEY, { expiresIn: "1d" });
 };
 
 export { createUser, login, getUser, verifyUser, randomNumber };

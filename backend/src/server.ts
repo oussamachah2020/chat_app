@@ -16,9 +16,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 //--ROUTES--
-app.use("api/users", router);
-app.use("api/notification", notificationRouter);
-app.use("api/messages", msgRouter);
+app.use("/api/users", router);
+app.use("/api/notification", notificationRouter);
+app.use("/api/messages", msgRouter);
 
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);

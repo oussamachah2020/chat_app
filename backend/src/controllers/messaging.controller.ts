@@ -8,22 +8,23 @@ const prisma = new PrismaClient();
 
 const sendMessage = AsyncHandler(
   async (req: Request, res: Response): Promise<any> => {
-    try {
-      const { content, sender, receiver } = req.body;
+    const { content } = req.body;
 
-      const newMessage = await prisma.message.create({
-        data: {
-          id: uuidv4(),
-          content,
-          sender,
-          receiver,
-          sent_at: moment().calendar(),
+    const newMessage = await prisma.message.create({
+      data: {
+        id: uuidv4(),
+        content,
+        sent_at: new Date(),
+        sender: {
+          connect: {
+            id: req.user,
+          },
         },
-      });
+      },
+    });
 
-      return res.status(201).json({ newMessage });
-    } catch (err) {
-      return res.status(500).json(err);
+    if (newMessage) {
+      return res.status(201).json({ message: "message sent !" });
     }
   }
 );
