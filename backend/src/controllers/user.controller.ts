@@ -8,13 +8,17 @@ import AsyncHandler from "express-async-handler";
 
 const prisma = new PrismaClient();
 
+/* 
+  Generate random number between 1000 and 9999
+  this number will be used as verification code
+*/
 function randomIntFromInterval(min: number, max: number): number {
-  // min and max included
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 const randomNumber = randomIntFromInterval(1000, 9999);
 
+//this function is used to create a new user and store it in the database
 const createUser = AsyncHandler(
   async (req: Request, res: Response): Promise<any> => {
     const { fullName, email, password }: userDataType = req.body;
@@ -51,6 +55,7 @@ const createUser = AsyncHandler(
   }
 );
 
+// this function is used for the user login by checking and verifying his credentials
 const login = AsyncHandler(
   async (req: Request, res: Response): Promise<any> => {
     const { email, password }: ILogin = req.body;
@@ -82,6 +87,7 @@ const login = AsyncHandler(
   }
 );
 
+// this function will be called to get the user data by taking a token in the headers
 const getUser = AsyncHandler(
   async (req: Request, res: Response): Promise<any> => {
     const userData = await prisma.user.findUnique({
@@ -97,6 +103,25 @@ const getUser = AsyncHandler(
   }
 );
 
+const getAllUsers = AsyncHandler(
+  async (req: Request, res: Response): Promise<any> => {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+      },
+    });
+
+    if (users.length > 0) {
+      return res.status(200).json(users);
+    }
+
+    return res.status(404).json({ message: "No user was found" });
+  }
+);
+
+// this function is for verifying the user by checking if the inserted code is matching the generated one.
 const verifyUser = AsyncHandler(
   async (req: Request, res: Response): Promise<any> => {
     const { verificationCode, email } = req.body;
@@ -116,8 +141,9 @@ const verifyUser = AsyncHandler(
   }
 );
 
+// this function generate a json web token by taking the user id as a parameter, which will be used in the token payload
 const generateToken = (id: string) => {
   return sign({ id }, process.env.JWT_PUBLIC_KEY, { expiresIn: "1d" });
 };
 
-export { createUser, login, getUser, verifyUser, randomNumber };
+export { createUser, login, getUser, verifyUser, randomNumber, getAllUsers };
