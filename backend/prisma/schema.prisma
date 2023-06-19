@@ -17,6 +17,7 @@ model User {
   password String
   verified Boolean @default(false)
   messages Message[]
+  profile Profile?
 }
 
 model Message {
@@ -32,4 +33,11 @@ model Receiver {
   receiverId String
   received_at DateTime
   messageId String
+}
+
+model Profile {
+  id String @id
+  imageURL String
+  author User @relation(fields: [authorId], references: [id])
+  authorId String  @unique
 }
