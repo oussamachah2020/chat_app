@@ -39,5 +39,5 @@ model Profile {
   id String @id
   imageURL String
   author User @relation(fields: [authorId], references: [id])
-  authorId String  @unique
+  authorId String @unique
 }

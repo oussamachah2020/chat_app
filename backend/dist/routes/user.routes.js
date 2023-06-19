@@ -12,6 +12,7 @@ router
     .get("/all", user_controller_1.getAllUsers)
     .post("/create", user_controller_1.createUser)
     .post("/login", user_controller_1.login)
-    .put("/verify", user_controller_1.verifyUser);
+    .put("/verify", user_controller_1.verifyUser)
+    .post("/upload", authMiddleware_1.default, user_controller_1.uploadImage);
 exports.default = router;
 //# sourceMappingURL=user.routes.js.map

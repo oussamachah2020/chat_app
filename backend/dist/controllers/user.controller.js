@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllUsers = exports.randomNumber = exports.verifyUser = exports.getUser = exports.login = exports.createUser = void 0;
+exports.uploadImage = exports.getAllUsers = exports.randomNumber = exports.verifyUser = exports.getUser = exports.login = exports.createUser = void 0;
 const client_1 = require("@prisma/client");
 const uuid_1 = require("uuid");
 const bcryptjs_1 = require("bcryptjs");
@@ -123,6 +123,27 @@ const verifyUser = (0, express_async_handler_1.default)(async (req, res) => {
     }
 });
 exports.verifyUser = verifyUser;
+const uploadImage = (0, express_async_handler_1.default)(async (req, res) => {
+    const { imageURL } = req.body;
+    if (!imageURL) {
+        return res.status(400).json({ message: "Pass a valid image URL" });
+    }
+    const newImage = await prisma.profile.create({
+        data: {
+            id: (0, uuid_1.v4)(),
+            imageURL: imageURL,
+            author: {
+                connect: {
+                    id: req.user, // Assuming req.user is an object that contains the user's ID
+                },
+            },
+        },
+    });
+    if (newImage) {
+        return res.status(201).json({ message: "Image successfully uploaded" });
+    }
+});
+exports.uploadImage = uploadImage;
 // this function generate a json web token by taking the user id as a parameter, which will be used in the token payload
 const generateToken = (id) => {
     return (0, jsonwebtoken_1.sign)({ id }, process.env.JWT_PUBLIC_KEY, { expiresIn: "1d" });
