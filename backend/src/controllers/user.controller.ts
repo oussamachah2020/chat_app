@@ -5,6 +5,10 @@ import { v4 as uuidv4 } from "uuid";
 import { compare, hash } from "bcryptjs";
 import { decode, sign } from "jsonwebtoken";
 import AsyncHandler from "express-async-handler";
+import { storage } from "../firebase";
+import { ref } from "firebase/storage";
+import multer from "multer";
+import path from "path";
 
 const prisma = new PrismaClient();
 
@@ -141,9 +145,43 @@ const verifyUser = AsyncHandler(
   }
 );
 
+const uploadImage = AsyncHandler(
+  async (req: Request, res: Response): Promise<any> => {
+    const { imageURL } = req.body;
+
+    if (!imageURL) {
+      return res.status(400).json({ message: "Pass a valid image URL" });
+    }
+
+    const newImage = await prisma.profile.create({
+      data: {
+        id: uuidv4(),
+        imageURL: imageURL,
+        author: {
+          connect: {
+            id: req.user, // Assuming req.user is an object that contains the user's ID
+          },
+        },
+      },
+    });
+
+    if (newImage) {
+      return res.status(201).json({ message: "Image successfully uploaded" });
+    }
+  }
+);
+
 // this function generate a json web token by taking the user id as a parameter, which will be used in the token payload
 const generateToken = (id: string) => {
   return sign({ id }, process.env.JWT_PUBLIC_KEY, { expiresIn: "1d" });
 };
 
-export { createUser, login, getUser, verifyUser, randomNumber, getAllUsers };
+export {
+  createUser,
+  login,
+  getUser,
+  verifyUser,
+  randomNumber,
+  getAllUsers,
+  uploadImage,
+};

@@ -4,6 +4,7 @@ import {
   getAllUsers,
   getUser,
   login,
+  uploadImage,
   verifyUser,
 } from "../controllers/user.controller";
 import protect from "../middleware/authMiddleware";
@@ -15,6 +16,7 @@ router
   .get("/all", getAllUsers)
   .post("/create", createUser)
   .post("/login", login)
-  .put("/verify", verifyUser);
+  .put("/verify", verifyUser)
+  .post("/upload", protect, uploadImage);
 
 export default router;
