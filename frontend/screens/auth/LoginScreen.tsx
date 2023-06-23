@@ -6,20 +6,18 @@ import { Button } from "@rneui/base";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { SCREENS } from "../../types/screens";
 
-type Props = {};
+type Props = {
+  navigation: any;
+};
 
-const Register = ({ navigation }: Props) => {
+const LoginScreen = ({ navigation }: Props) => {
   return (
     <View style={styles.container}>
-      <Image source={assets.authImage} resizeMode="contain" />
-      <Text style={styles.title}>Sign up</Text>
+      <View style={{ alignItems: "center" }}>
+        <Image source={assets.authImage} resizeMode="contain" />
+      </View>
+      <Text style={styles.title}>Sign in</Text>
       <View style={styles.form}>
-        <Input
-          inputMode="text"
-          placeholder="Full Name"
-          leftIcon={<Icon name="user" size={25} color={"#7C56EC"} />}
-          inputStyle={{ paddingLeft: 5 }}
-        />
         <Input
           inputMode="email"
           placeholder="E-mail"
@@ -33,20 +31,64 @@ const Register = ({ navigation }: Props) => {
           inputStyle={{ paddingLeft: 5 }}
           leftIcon={<Icon name="lock" size={25} color={"#7C56EC"} />}
         />
-        <Text style={styles.agreement}>
-          By signing up, you’re agree to our{" "}
-          <Text style={styles.specialText}>Terms & Conditions</Text> and{" "}
-          <Text style={styles.specialText}>Privacy Policies</Text>
-        </Text>
+        <TouchableOpacity
+          style={styles.passwordRestorationBtn}
+          onPress={() => navigation.navigate(SCREENS.RESTORATION_SCREEN)}
+        >
+          <Text
+            style={{
+              fontFamily: FONTS.RobotoMedium,
+              color: COLORS.primary,
+              fontSize: SIZES.medium,
+            }}
+          >
+            Forget Password?
+          </Text>
+        </TouchableOpacity>
         <Button
           color={COLORS.primary}
-          title={"Create account"}
+          title={"Login"}
           buttonStyle={{
             borderRadius: 10,
             height: 50,
           }}
+          onPress={() => navigation.navigate(SCREENS.HOME_SCREEN)}
         />
       </View>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          marginHorizontal: 25,
+          marginTop: 20,
+        }}
+      >
+        <View style={{ flex: 1, height: 1, backgroundColor: "black" }} />
+        <View>
+          <Text style={{ width: 50, textAlign: "center" }}>OR</Text>
+        </View>
+        <View style={{ flex: 1, height: 1, backgroundColor: "black" }} />
+      </View>
+      <Button
+        title={"Login With Google"}
+        buttonStyle={{
+          marginHorizontal: 25,
+          borderRadius: 10,
+          marginTop: 20,
+          height: 50,
+        }}
+        titleStyle={{
+          color: "black",
+        }}
+        color={"#E2E2E2"}
+        icon={
+          <Image
+            source={assets.google}
+            resizeMode="cover"
+            style={{ width: 30, height: 30, position: "relative", right: 60 }}
+          />
+        }
+      />
       <View
         style={{
           flexDirection: "row",
@@ -62,10 +104,10 @@ const Register = ({ navigation }: Props) => {
             fontSize: SIZES.medium,
           }}
         >
-          Already having an account?
+          New User?
         </Text>
         <TouchableOpacity
-          onPress={() => navigation.navigate(SCREENS.LOGIN_SCREEN)}
+          onPress={() => navigation.navigate(SCREENS.REGISTER_SCREEN)}
         >
           <Text
             style={{
@@ -75,7 +117,7 @@ const Register = ({ navigation }: Props) => {
               fontSize: SIZES.medium,
             }}
           >
-            Login
+            Register
           </Text>
         </TouchableOpacity>
       </View>
@@ -83,7 +125,7 @@ const Register = ({ navigation }: Props) => {
   );
 };
 
-export default Register;
+export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -110,5 +152,11 @@ const styles = StyleSheet.create({
   specialText: {
     color: COLORS.primary,
     fontFamily: FONTS.RobotoBold,
+  },
+  passwordRestorationBtn: {
+    marginTop: -5,
+    marginBottom: 30,
+    marginRight: 10,
+    alignSelf: "flex-end",
   },
 });
