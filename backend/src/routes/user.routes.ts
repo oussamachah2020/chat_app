@@ -4,6 +4,8 @@ import {
   getAllUsers,
   getUser,
   login,
+  sendPasswordRestorationEmail,
+  updatePassword,
   uploadImage,
   verifyUser,
 } from "../controllers/user.controller";
@@ -17,6 +19,8 @@ router
   .post("/create", createUser)
   .post("/login", login)
   .put("/verify", verifyUser)
-  .post("/upload", protect, uploadImage);
+  .post("/upload", protect, uploadImage)
+  .post("/send-restoration-email", sendPasswordRestorationEmail)
+  .put("/update-password", updatePassword);
 
 export default router;

@@ -6,16 +6,26 @@ import { Button } from "@rneui/base";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { SCREENS } from "../../types/screens";
 
-type Props = {};
+type RegisterProps = {
+  navigation: any;
+};
 
-const Login = ({ navigation }: Props) => {
+const RegisterScreen = ({ navigation }: RegisterProps) => {
   return (
     <View style={styles.container}>
-      <View style={{ alignItems: "center" }}>
-        <Image source={assets.authImage} resizeMode="contain" />
-      </View>
-      <Text style={styles.title}>Sign in</Text>
+      <Image
+        source={assets.authImage}
+        resizeMode="contain"
+        style={{ alignSelf: "center" }}
+      />
+      <Text style={styles.title}>Sign up</Text>
       <View style={styles.form}>
+        <Input
+          inputMode="text"
+          placeholder="Full Name"
+          leftIcon={<Icon name="user" size={25} color={"#7C56EC"} />}
+          inputStyle={{ paddingLeft: 5 }}
+        />
         <Input
           inputMode="email"
           placeholder="E-mail"
@@ -29,64 +39,20 @@ const Login = ({ navigation }: Props) => {
           inputStyle={{ paddingLeft: 5 }}
           leftIcon={<Icon name="lock" size={25} color={"#7C56EC"} />}
         />
-        <TouchableOpacity
-          style={styles.passwordRestorationBtn}
-          onPress={() => navigation.navigate(SCREENS.RESTORATION_SCREEN)}
-        >
-          <Text
-            style={{
-              fontFamily: FONTS.RobotoMedium,
-              color: COLORS.primary,
-              fontSize: SIZES.medium,
-            }}
-          >
-            Forget Password?
-          </Text>
-        </TouchableOpacity>
+        <Text style={styles.agreement}>
+          By signing up, you’re agree to our{" "}
+          <Text style={styles.specialText}>Terms & Conditions</Text> and{" "}
+          <Text style={styles.specialText}>Privacy Policies</Text>
+        </Text>
         <Button
           color={COLORS.primary}
-          title={"Login"}
+          title={"Create account"}
           buttonStyle={{
             borderRadius: 10,
             height: 50,
           }}
-          onPress={() => navigation.navigate(SCREENS.HOME_SCREEN)}
         />
       </View>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          marginHorizontal: 25,
-          marginTop: 20,
-        }}
-      >
-        <View style={{ flex: 1, height: 1, backgroundColor: "black" }} />
-        <View>
-          <Text style={{ width: 50, textAlign: "center" }}>OR</Text>
-        </View>
-        <View style={{ flex: 1, height: 1, backgroundColor: "black" }} />
-      </View>
-      <Button
-        title={"Login With Google"}
-        buttonStyle={{
-          marginHorizontal: 25,
-          borderRadius: 10,
-          marginTop: 20,
-          height: 50,
-        }}
-        titleStyle={{
-          color: "black",
-        }}
-        color={"#E2E2E2"}
-        icon={
-          <Image
-            source={assets.google}
-            resizeMode="cover"
-            style={{ width: 30, height: 30, position: "relative", right: 60 }}
-          />
-        }
-      />
       <View
         style={{
           flexDirection: "row",
@@ -102,10 +68,10 @@ const Login = ({ navigation }: Props) => {
             fontSize: SIZES.medium,
           }}
         >
-          New User?
+          Already having an account?
         </Text>
         <TouchableOpacity
-          onPress={() => navigation.navigate(SCREENS.REGISTER_SCREEN)}
+          onPress={() => navigation.navigate(SCREENS.LOGIN_SCREEN)}
         >
           <Text
             style={{
@@ -115,7 +81,7 @@ const Login = ({ navigation }: Props) => {
               fontSize: SIZES.medium,
             }}
           >
-            Register
+            Login
           </Text>
         </TouchableOpacity>
       </View>
@@ -123,7 +89,7 @@ const Login = ({ navigation }: Props) => {
   );
 };
 
-export default Login;
+export default RegisterScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -150,11 +116,5 @@ const styles = StyleSheet.create({
   specialText: {
     color: COLORS.primary,
     fontFamily: FONTS.RobotoBold,
-  },
-  passwordRestorationBtn: {
-    marginTop: -5,
-    marginBottom: 30,
-    marginRight: 10,
-    alignSelf: "flex-end",
   },
 });

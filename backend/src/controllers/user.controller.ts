@@ -5,10 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { compare, hash } from "bcryptjs";
 import { decode, sign } from "jsonwebtoken";
 import AsyncHandler from "express-async-handler";
-import { storage } from "../firebase";
-import { ref } from "firebase/storage";
-import multer from "multer";
-import path from "path";
+import nodemailer from "nodemailer";
 
 const prisma = new PrismaClient();
 
@@ -171,6 +168,142 @@ const uploadImage = AsyncHandler(
   }
 );
 
+const sendPasswordRestorationEmail = AsyncHandler(
+  async (req: Request, res: Response): Promise<any> => {
+    const { email } = req.body;
+
+    const checkEmail = await prisma.user.findUnique({ where: { email } });
+
+    if (!email) {
+      return res.status(400).json({ msg: "Please enter your email" });
+    }
+
+    if (!checkEmail) {
+      return res.status(404).json({ msg: "this email does not exist" });
+    } else {
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL,
+          pass: process.env.PASSWORD,
+        },
+      });
+
+      const emailBody = `<!DOCTYPE html>
+      <html>
+      <head>
+          <title>Your Beautiful Email</title>
+          <style>
+              body {
+                  font-family: Arial, sans-serif;
+                  background-color: #f7f7f7;
+                  margin: 0;
+                  padding: 0;
+              }
+      
+              .container {
+                  max-width: 600px;
+                  margin: 0 auto;
+                  background-color: #ffffff;
+                  padding: 20px;
+                  border-radius: 4px;
+                  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+              }
+      
+              h1 {
+                  color: #333333;
+                  text-align: center;
+              }
+      
+              p {
+                  color: #555555;
+                  line-height: 1.5;
+                  margin-bottom: 20px;
+              }
+      
+              .button {
+                  display: inline-block;
+                  padding: 10px 20px;
+                  background-color: #4CAF50;
+                  color: #ffffff;
+                  text-decoration: none;
+                  border-radius: 4px;
+              }
+      
+              .button:hover {
+                  background-color: #45a049;
+              }
+      
+              .footer {
+                  text-align: center;
+                  margin-top: 30px;
+                  color: #999999;
+                  font-size: 12px;
+              }
+          </style>
+      </head>
+      <body>
+          <div class="container">
+          <h2>Hello dear user</h2>
+          <p>Please click on the following button to update your password.</p>
+          <p>you will be directed to a page with a form where you can insert the new password</p>
+          <a href='http://localhost:5173/password-restore?email=${email}'>
+            <button>Update Password</button>
+          </a>
+          </div>
+      
+          <div class="footer">
+              &copy; 2023 Your Company. All rights reserved.
+          </div>
+      </body>
+      </html>
+      `;
+
+      // setup email data
+      const mailOptions = {
+        from: `"Chat" <${process.env.EMAIL}>`, // sender address
+        to: `${email}`, // list of receivers
+        subject: "Password Restoration", // Subject line
+        text: "Please click on the following link to change your password:", // plain text body
+        html: emailBody, // html body
+      };
+
+      // send email
+      transporter.sendMail(mailOptions, (error: any, info: any) => {
+        if (error) {
+          return console.log(error);
+        } else {
+          return res.status(200).json({
+            msg: `an email has been sent to ${email}\n if you don't see any email messages check in the spam`,
+          });
+        }
+      });
+    }
+  }
+);
+
+const updatePassword = AsyncHandler(
+  async (req: Request, res: Response): Promise<any> => {
+    const { email, password } = req.body;
+
+    const hashedPassword: string = await hash(password, 10);
+
+    const checkUser = await prisma.user.update({
+      where: {
+        email,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
+
+    if (checkUser) {
+      return res.status(200).json({ msg: "password changed!" });
+    }
+    return res.status(400).json({ msg: "something went wrong" });
+  }
+);
+
 // this function generate a json web token by taking the user id as a parameter, which will be used in the token payload
 const generateToken = (id: string) => {
   return sign({ id }, process.env.JWT_PUBLIC_KEY, { expiresIn: "1d" });
@@ -184,4 +317,6 @@ export {
   randomNumber,
   getAllUsers,
   uploadImage,
+  sendPasswordRestorationEmail,
+  updatePassword,
 };

@@ -6,10 +6,13 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Description from "./screens/Description";
 import { FONTS, SIZES } from "./constants";
 import { SCREENS } from "./types/screens";
-import Register from "./screens/auth/Register";
-import Login from "./screens/auth/Login";
 import PasswordRestoration from "./screens/PasswordRestoration";
-import Home from "./screens/Chat/Home";
+import ProfileScreen from "./screens/user/ProfileScreen";
+import HomeScreen from "./screens/Chat/HomeScreen";
+import LoginScreen from "./screens/auth/LoginScreen";
+import RegisterScreen from "./screens/auth/RegisterScreen";
+import NavigationBar from "./components/NavigationBar";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 const Stack = createStackNavigator();
 
@@ -36,22 +39,50 @@ export default function App() {
 
   if (!loaded) return null;
 
+  const Tab = createBottomTabNavigator();
+  const userToken = "";
+
   return (
-    <NavigationContainer theme={theme}>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen
-          name={SCREENS.DESCRIPTION_SCREEN}
-          component={Description}
-        />
-        <Stack.Screen name={SCREENS.REGISTER_SCREEN} component={Register} />
-        <Stack.Screen name={SCREENS.LOGIN_SCREEN} component={Login} />
-        <Stack.Screen
-          name={SCREENS.RESTORATION_SCREEN}
-          component={PasswordRestoration}
-        />
-        <Stack.Screen name={SCREENS.HOME_SCREEN} component={Home} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <>
+      {userToken === "" ? (
+        <NavigationContainer theme={theme}>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen
+              name={SCREENS.DESCRIPTION_SCREEN}
+              component={Description}
+            />
+            <Stack.Screen
+              name={SCREENS.REGISTER_SCREEN}
+              component={RegisterScreen}
+            />
+            <Stack.Screen name={SCREENS.LOGIN_SCREEN} component={LoginScreen} />
+            <Stack.Screen
+              name={SCREENS.RESTORATION_SCREEN}
+              component={PasswordRestoration}
+            />
+            <Stack.Screen
+              name={SCREENS.HOME_SCREEN}
+              component={HomeScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name={SCREENS.PROFILE_SCREEN}
+              component={ProfileScreen}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      ) : (
+        <NavigationContainer>
+          <Tab.Navigator screenOptions={{ headerShown: false }}>
+            <Tab.Screen name={SCREENS.HOME_SCREEN} component={HomeScreen} />
+            <Tab.Screen
+              name={SCREENS.PROFILE_SCREEN}
+              component={ProfileScreen}
+            />
+          </Tab.Navigator>
+        </NavigationContainer>
+      )}
+    </>
   );
 }
 

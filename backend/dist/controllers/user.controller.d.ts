@@ -5,4 +5,6 @@ declare const getUser: import("express").RequestHandler<import("express-serve-st
 declare const getAllUsers: import("express").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>;
 declare const verifyUser: import("express").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>;
 declare const uploadImage: import("express").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>;
-export { createUser, login, getUser, verifyUser, randomNumber, getAllUsers, uploadImage, };
+declare const sendPasswordRestorationEmail: import("express").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>;
+declare const updatePassword: import("express").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>;
+export { createUser, login, getUser, verifyUser, randomNumber, getAllUsers, uploadImage, sendPasswordRestorationEmail, updatePassword, };

@@ -13,6 +13,8 @@ router
     .post("/create", user_controller_1.createUser)
     .post("/login", user_controller_1.login)
     .put("/verify", user_controller_1.verifyUser)
-    .post("/upload", authMiddleware_1.default, user_controller_1.uploadImage);
+    .post("/upload", authMiddleware_1.default, user_controller_1.uploadImage)
+    .post("/send-restoration-email", user_controller_1.sendPasswordRestorationEmail)
+    .put("/update-password", user_controller_1.updatePassword);
 exports.default = router;
 //# sourceMappingURL=user.routes.js.map
