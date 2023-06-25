@@ -1,16 +1,54 @@
-import React from "react";
+import React, { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { assets, COLORS, SIZES, FONTS } from "../../constants";
 import { Input } from "@rneui/themed";
 import { Button } from "@rneui/base";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { SCREENS } from "../../types/screens";
+import { useUserStore } from "../../store/userStore";
+import { userRegistration } from "../../api/loaders";
+import Loader from "../../components/Loader";
+import Toast from "react-native-toast-message";
 
 type RegisterProps = {
   navigation: any;
 };
 
+interface IUser {
+  fullName: string;
+  email: string;
+  password: string;
+}
+
 const RegisterScreen = ({ navigation }: RegisterProps) => {
+  const [formData, setFormData] = useState<IUser>({
+    fullName: "",
+    email: "",
+    password: "",
+  });
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const setToken = useUserStore((v) => v.setAccessToken);
+
+  const handleUserRegistration = () => {
+    setIsLoading(true);
+    userRegistration(formData.fullName, formData.email, formData.password).then(
+      (response) => {
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1500);
+        // console.log(response);
+        Toast.show({
+          type: "success",
+          text1: response["message"],
+        });
+
+        setToken(response["access_token"]);
+      }
+    );
+  };
+
   return (
     <View style={styles.container}>
       <Image
@@ -25,12 +63,26 @@ const RegisterScreen = ({ navigation }: RegisterProps) => {
           placeholder="Full Name"
           leftIcon={<Icon name="user" size={25} color={"#7C56EC"} />}
           inputStyle={{ paddingLeft: 5 }}
+          value={formData.fullName}
+          onChangeText={(text) =>
+            setFormData((prevData) => ({
+              ...prevData,
+              fullName: text,
+            }))
+          }
         />
         <Input
           inputMode="email"
           placeholder="E-mail"
           leftIcon={<Icon name="at" size={25} color={"#7C56EC"} />}
           inputStyle={{ paddingLeft: 5 }}
+          value={formData.email}
+          onChangeText={(text) =>
+            setFormData((prevData) => ({
+              ...prevData,
+              email: text,
+            }))
+          }
         />
         <Input
           inputMode="text"
@@ -38,20 +90,43 @@ const RegisterScreen = ({ navigation }: RegisterProps) => {
           placeholder="Password"
           inputStyle={{ paddingLeft: 5 }}
           leftIcon={<Icon name="lock" size={25} color={"#7C56EC"} />}
+          value={formData.password}
+          onChangeText={(text) =>
+            setFormData((prevData) => ({
+              ...prevData,
+              password: text,
+            }))
+          }
         />
         <Text style={styles.agreement}>
           By signing up, you’re agree to our{" "}
           <Text style={styles.specialText}>Terms & Conditions</Text> and{" "}
           <Text style={styles.specialText}>Privacy Policies</Text>
         </Text>
-        <Button
-          color={COLORS.primary}
-          title={"Create account"}
-          buttonStyle={{
+        <TouchableOpacity
+          style={{
             borderRadius: 10,
             height: 50,
+            justifyContent: "center",
+            backgroundColor: COLORS.primary,
           }}
-        />
+          onPress={handleUserRegistration}
+        >
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <Text
+              style={{
+                color: "#fff",
+                textAlign: "center",
+                fontFamily: FONTS.medium,
+                letterSpacing: 1,
+              }}
+            >
+              Create account
+            </Text>
+          )}
+        </TouchableOpacity>
       </View>
       <View
         style={{

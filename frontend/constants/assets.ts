@@ -5,6 +5,8 @@ import FAQ from "../assets/images/FAQs.png";
 import ProfilePic from "../assets/images/profilePic.png";
 import Bell from "../assets/images/bell.png";
 import State from "../assets/images/state.png";
+import FullProfilePic from "../assets/images/fullPic.png";
+import CameraIcon from "../assets/images/camera.png";
 
 export default {
   phone,
@@ -14,4 +16,6 @@ export default {
   ProfilePic,
   Bell,
   State,
+  FullProfilePic,
+  CameraIcon,
 };

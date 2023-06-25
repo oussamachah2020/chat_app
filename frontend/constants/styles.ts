@@ -10,6 +10,7 @@ export const FONTS = {
 
 export const COLORS = {
   primary: "#5E30E7",
+  secondary: "#9c8ef7",
   white: "#FFFFFF",
   gray: "#74858C",
 };

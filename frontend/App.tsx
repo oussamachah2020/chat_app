@@ -4,7 +4,7 @@ import { useFonts } from "expo-font";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import Description from "./screens/Description";
-import { FONTS, SIZES } from "./constants";
+import { COLORS, FONTS, SIZES } from "./constants";
 import { SCREENS } from "./types/screens";
 import PasswordRestoration from "./screens/PasswordRestoration";
 import ProfileScreen from "./screens/user/ProfileScreen";
@@ -13,6 +13,10 @@ import LoginScreen from "./screens/auth/LoginScreen";
 import RegisterScreen from "./screens/auth/RegisterScreen";
 import NavigationBar from "./components/NavigationBar";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { useUserStore } from "./store/userStore";
+import { useEffect } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import SettingsScreen from "./screens/Chat/SettingsScreen";
 
 const Stack = createStackNavigator();
 
@@ -25,6 +29,11 @@ const theme = {
 };
 
 export default function App() {
+  const accessToken = useUserStore((v) => v.accessToken);
+  // useEffect(() => {
+  //   console.log(accessToken);
+  // }, []);
+
   const [loaded] = useFonts({
     PoppinsBold: require("./assets/fonts/Poppins/Poppins-Bold.ttf"),
     PoppinsSemiBold: require("./assets/fonts/Poppins/Poppins-SemiBold.ttf"),
@@ -40,11 +49,10 @@ export default function App() {
   if (!loaded) return null;
 
   const Tab = createBottomTabNavigator();
-  const userToken = "";
 
   return (
     <>
-      {userToken === "" ? (
+      {accessToken === "" ? (
         <NavigationContainer theme={theme}>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen
@@ -74,10 +82,39 @@ export default function App() {
       ) : (
         <NavigationContainer>
           <Tab.Navigator screenOptions={{ headerShown: false }}>
-            <Tab.Screen name={SCREENS.HOME_SCREEN} component={HomeScreen} />
+            <Tab.Screen
+              name={SCREENS.HOME_SCREEN}
+              component={HomeScreen}
+              options={{
+                tabBarLabel: "Home",
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="home" color={COLORS.secondary} size={25} />
+                ),
+              }}
+            />
             <Tab.Screen
               name={SCREENS.PROFILE_SCREEN}
               component={ProfileScreen}
+              options={{
+                tabBarLabel: "Profile",
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="person" color={COLORS.secondary} size={25} />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name={SCREENS.SETTINGS_SCREEN}
+              component={SettingsScreen}
+              options={{
+                tabBarLabel: "Settings",
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons
+                    name="settings"
+                    color={COLORS.secondary}
+                    size={25}
+                  />
+                ),
+              }}
             />
           </Tab.Navigator>
         </NavigationContainer>
