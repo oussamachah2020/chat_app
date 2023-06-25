@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Image,
   SafeAreaView,
@@ -19,6 +19,8 @@ import { SCREENS } from "../../types/screens";
 import NavigationBar from "../../components/NavigationBar";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import ProfileScreen from "../user/ProfileScreen";
+import { useUserStore } from "../../store/userStore";
+import { getUserInfo } from "../../api/loaders";
 // import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 type HomeProps = {
@@ -28,6 +30,16 @@ type HomeProps = {
 const HomeScreen = ({ navigation }: HomeProps) => {
   const [open, setOpen] = React.useState<boolean>(false);
   const onStateChange = () => setOpen(!open);
+  const accessToken = useUserStore((v) => v.accessToken);
+  const fullName = useUserStore((v) => v.fullName);
+  const setEmail = useUserStore((v) => v.setEmail);
+  const setFullName = useUserStore((v) => v.setFullName);
+
+  useEffect(() => {
+    getUserInfo(accessToken).then((response) => {
+      setFullName(response["fullName"]);
+    });
+  }, [accessToken]);
 
   const Tab = createBottomTabNavigator();
 
@@ -42,7 +54,7 @@ const HomeScreen = ({ navigation }: HomeProps) => {
               fontSize: 14,
             }}
           >
-            Hi, Oussama Chahidi !
+            Hello, {fullName} !
           </Text>
         </View>
         <View style={{ position: "relative" }}>
