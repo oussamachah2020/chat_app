@@ -21,6 +21,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import ProfileScreen from "../user/ProfileScreen";
 import { useUserStore } from "../../store/userStore";
 import { getUserInfo } from "../../api/loaders";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 // import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 type HomeProps = {
@@ -38,6 +39,7 @@ const HomeScreen = ({ navigation }: HomeProps) => {
   useEffect(() => {
     getUserInfo(accessToken).then((response) => {
       setFullName(response["fullName"]);
+      setEmail(response["email"]);
     });
   }, [accessToken]);
 
@@ -45,6 +47,8 @@ const HomeScreen = ({ navigation }: HomeProps) => {
 
   return (
     <View style={styles.container}>
+      <Toast />
+
       <View style={styles.header}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
           <Image source={assets.ProfilePic} alt="profile_pic" />

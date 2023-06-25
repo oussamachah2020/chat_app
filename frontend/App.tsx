@@ -16,6 +16,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useUserStore } from "./store/userStore";
 import { useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import SettingsScreen from "./screens/Chat/SettingsScreen";
 
 const Stack = createStackNavigator();
 
@@ -87,7 +88,7 @@ export default function App() {
               options={{
                 tabBarLabel: "Home",
                 tabBarIcon: ({ color, size }) => (
-                  <Ionicons name="home" color={COLORS.secondary} size={size} />
+                  <Ionicons name="home" color={COLORS.secondary} size={25} />
                 ),
               }}
             />
@@ -97,10 +98,20 @@ export default function App() {
               options={{
                 tabBarLabel: "Profile",
                 tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="person" color={COLORS.secondary} size={25} />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name={SCREENS.SETTINGS_SCREEN}
+              component={SettingsScreen}
+              options={{
+                tabBarLabel: "Settings",
+                tabBarIcon: ({ color, size }) => (
                   <Ionicons
-                    name="person"
+                    name="settings"
                     color={COLORS.secondary}
-                    size={size}
+                    size={25}
                   />
                 ),
               }}

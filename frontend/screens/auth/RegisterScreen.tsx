@@ -8,6 +8,7 @@ import { SCREENS } from "../../types/screens";
 import { useUserStore } from "../../store/userStore";
 import { userRegistration } from "../../api/loaders";
 import Loader from "../../components/Loader";
+import Toast from "react-native-toast-message";
 
 type RegisterProps = {
   navigation: any;
@@ -37,11 +38,17 @@ const RegisterScreen = ({ navigation }: RegisterProps) => {
         setTimeout(() => {
           setIsLoading(false);
         }, 1500);
-        console.log(response);
+        // console.log(response);
+        Toast.show({
+          type: "success",
+          text1: response["message"],
+        });
+
         setToken(response["access_token"]);
       }
     );
   };
+
   return (
     <View style={styles.container}>
       <Image

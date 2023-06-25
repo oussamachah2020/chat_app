@@ -11,6 +11,7 @@ import { useUserStore } from "../../store/userStore";
 // import { Button } from "react-native-paper";
 import Loader from "../../components/Loader";
 import { Button } from "@rneui/base";
+import { signIn } from "../../firebase";
 
 type Props = {
   navigation: any;
@@ -156,6 +157,7 @@ const LoginScreen = ({ navigation }: Props) => {
             style={{ width: 30, height: 30, position: "relative", right: 60 }}
           />
         }
+        onPress={signIn}
       />
       <View
         style={{
