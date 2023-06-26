@@ -100,7 +100,7 @@ const ProfileScreen = (props: Props) => {
             itemDimension={110}
             data={services}
             style={styles.gridView}
-            spacing={20}
+            spacing={10}
             renderItem={({ item, index }) => (
               <TouchableOpacity
                 key={index}
