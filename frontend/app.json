@@ -17,11 +17,9 @@
     "ios": {
       "supportsTablet": true
     },
-  
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
-       
         "backgroundColor": "#9747FF"
       }
     },

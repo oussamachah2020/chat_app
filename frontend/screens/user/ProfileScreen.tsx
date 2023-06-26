@@ -159,14 +159,4 @@ const styles = StyleSheet.create({
     padding: 10,
     height: 150,
   },
-  // itemName: {
-  //   fontSize: 16,
-  //   color: "#fff",
-  //   fontWeight: "600",
-  // },
-  // itemCode: {
-  //   fontWeight: "600",
-  //   fontSize: 12,
-  //   color: "#fff",
-  // },
 });
