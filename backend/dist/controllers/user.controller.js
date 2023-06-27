@@ -23,6 +23,11 @@ exports.randomNumber = randomNumber;
 //this function is used to create a new user and store it in the database
 const createUser = (0, express_async_handler_1.default)(async (req, res) => {
     const { fullName, email, password } = req.body;
+    if (!fullName || !email || !password) {
+        return res
+            .status(400)
+            .json({ message: "Enter your informations", status_code: 400 });
+    }
     const hashedPassword = await (0, bcryptjs_1.hash)(password, 10);
     const userExist = await prisma.user.findUnique({
         where: {
@@ -30,7 +35,9 @@ const createUser = (0, express_async_handler_1.default)(async (req, res) => {
         },
     });
     if (userExist) {
-        return res.status(409).json({ message: "User already exists" });
+        return res
+            .status(409)
+            .json({ message: "User already exists", status_code: 409 });
     }
     const newUser = await prisma.user.create({
         data: {
@@ -46,6 +53,7 @@ const createUser = (0, express_async_handler_1.default)(async (req, res) => {
         return res.status(201).json({
             message: "User created successfully",
             access_token: generateToken(newUser.id),
+            status_code: 201,
         });
     }
 });
@@ -53,6 +61,11 @@ exports.createUser = createUser;
 // this function is used for the user login by checking and verifying his credentials
 const login = (0, express_async_handler_1.default)(async (req, res) => {
     const { email, password } = req.body;
+    if (!email || !password) {
+        return res
+            .status(400)
+            .json({ message: "Enter your informations", status_code: 400 });
+    }
     const user = await prisma.user.findUnique({
         where: {
             email,

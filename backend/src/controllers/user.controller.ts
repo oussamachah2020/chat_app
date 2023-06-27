@@ -24,6 +24,12 @@ const createUser = AsyncHandler(
   async (req: Request, res: Response): Promise<any> => {
     const { fullName, email, password }: userDataType = req.body;
 
+    if (!fullName || !email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Enter your informations", status_code: 400 });
+    }
+
     const hashedPassword: string = await hash(password, 10);
 
     const userExist = await prisma.user.findUnique({
@@ -33,7 +39,9 @@ const createUser = AsyncHandler(
     });
 
     if (userExist) {
-      return res.status(409).json({ message: "User already exists" });
+      return res
+        .status(409)
+        .json({ message: "User already exists", status_code: 409 });
     }
 
     const newUser = await prisma.user.create({
@@ -51,6 +59,7 @@ const createUser = AsyncHandler(
       return res.status(201).json({
         message: "User created successfully",
         access_token: generateToken(newUser.id),
+        status_code: 201,
       });
     }
   }
@@ -60,6 +69,12 @@ const createUser = AsyncHandler(
 const login = AsyncHandler(
   async (req: Request, res: Response): Promise<any> => {
     const { email, password }: ILogin = req.body;
+
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Enter your informations", status_code: 400 });
+    }
 
     const user = await prisma.user.findUnique({
       where: {
