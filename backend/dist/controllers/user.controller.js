@@ -45,7 +45,7 @@ const createUser = (0, express_async_handler_1.default)(async (req, res) => {
     if (newUser) {
         return res.status(201).json({
             message: "User created successfully",
-            token: generateToken(newUser.id),
+            access_token: generateToken(newUser.id),
         });
     }
 });

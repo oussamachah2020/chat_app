@@ -50,7 +50,7 @@ const createUser = AsyncHandler(
     if (newUser) {
       return res.status(201).json({
         message: "User created successfully",
-        token: generateToken(newUser.id),
+        access_token: generateToken(newUser.id),
       });
     }
   }
