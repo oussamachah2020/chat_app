@@ -7,6 +7,7 @@ import Bell from "../assets/images/bell.png";
 import State from "../assets/images/state.png";
 import FullProfilePic from "../assets/images/fullPic.png";
 import CameraIcon from "../assets/images/camera.png";
+import Check from "../assets/images/Checkmark.png";
 
 export default {
   phone,
@@ -18,4 +19,5 @@ export default {
   State,
   FullProfilePic,
   CameraIcon,
+  Check,
 };

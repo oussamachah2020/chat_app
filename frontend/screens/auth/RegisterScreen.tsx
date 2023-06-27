@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { assets, COLORS, SIZES, FONTS } from "../../constants";
 import { Input } from "@rneui/themed";
@@ -9,7 +9,8 @@ import { userRegistration } from "../../api/loaders";
 import Loader from "../../components/Loader";
 import Toast from "react-native-toast-message";
 import { Button, Overlay } from "react-native-elements";
-import VerificationModal from "../../components/VerificationModal";
+import ModalToast from "../../components/ModalToast";
+import { IconButton } from "react-native-paper";
 
 type RegisterProps = {
   navigation: any;
@@ -29,10 +30,12 @@ const RegisterScreen = ({ navigation }: RegisterProps) => {
   });
 
   const [visible, setVisible] = useState(false);
-
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [disabled, setDisabled] = useState<boolean>(false);
+  const [togglePasswordVisibility, setTogglePasswordVisibility] =
+    useState<boolean>(false);
 
-  const setToken = useUserStore((v) => v.setAccessToken);
+  const setTmpToken = useUserStore((v) => v.setTmpToken);
 
   const handleUserRegistration = () => {
     setIsLoading(true);
@@ -40,21 +43,41 @@ const RegisterScreen = ({ navigation }: RegisterProps) => {
       (response) => {
         setTimeout(() => {
           setIsLoading(false);
+          setVisible(true);
         }, 1500);
-        // console.log(response);
-
-        setVisible(true);
-        // setToken(response["access_token"]);
+        setTmpToken(response["access_token"]);
       }
     );
+
+    setFormData({
+      fullName: "",
+      email: "",
+      password: "",
+    });
   };
 
-  if (visible) {
-    return <VerificationModal {...{ visible, setVisible }} />;
-  }
+  useEffect(() => {
+    if (
+      formData.email === "" ||
+      formData.fullName === "" ||
+      formData.password === ""
+    ) {
+      setDisabled(true);
+    } else {
+      setDisabled(false);
+    }
+  }, [disabled, formData]);
 
   return (
     <View style={styles.container}>
+      <ModalToast
+        visible={visible}
+        setVisible={setVisible}
+        title="Account has been created successfully!"
+        text="if you didn’t receive any code,"
+        link="click here please!"
+      />
+
       <Image
         source={assets.authImage}
         resizeMode="contain"
@@ -90,10 +113,22 @@ const RegisterScreen = ({ navigation }: RegisterProps) => {
         />
         <Input
           inputMode="text"
-          secureTextEntry={true}
+          secureTextEntry={togglePasswordVisibility ? false : true}
           placeholder="Password"
           inputStyle={{ paddingLeft: 5 }}
           leftIcon={<Icon name="lock" size={25} color={"#7C56EC"} />}
+          rightIcon={
+            <TouchableOpacity
+              onPress={() =>
+                setTogglePasswordVisibility(!togglePasswordVisibility)
+              }
+            >
+              <Icon
+                name={togglePasswordVisibility ? "eye" : "eye-slash"}
+                size={25}
+              ></Icon>
+            </TouchableOpacity>
+          }
           value={formData.password}
           onChangeText={(text) =>
             setFormData((prevData) => ({
@@ -102,6 +137,7 @@ const RegisterScreen = ({ navigation }: RegisterProps) => {
             }))
           }
         />
+
         <Text style={styles.agreement}>
           By signing up, you’re agree to our{" "}
           <Text style={styles.specialText}>Terms & Conditions</Text> and{" "}
@@ -112,8 +148,9 @@ const RegisterScreen = ({ navigation }: RegisterProps) => {
             borderRadius: 10,
             height: 50,
             justifyContent: "center",
-            backgroundColor: COLORS.primary,
+            backgroundColor: disabled ? "#7e7e7e" : COLORS.primary,
           }}
+          disabled={disabled}
           onPress={handleUserRegistration}
         >
           {isLoading ? (
