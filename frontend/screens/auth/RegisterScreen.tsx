@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { assets, COLORS, SIZES, FONTS } from "../../constants";
 import { Input } from "@rneui/themed";
-import { Button } from "@rneui/base";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { SCREENS } from "../../types/screens";
 import { useUserStore } from "../../store/userStore";
 import { userRegistration } from "../../api/loaders";
 import Loader from "../../components/Loader";
 import Toast from "react-native-toast-message";
+import { Button, Overlay } from "react-native-elements";
+import VerificationModal from "../../components/VerificationModal";
 
 type RegisterProps = {
   navigation: any;
@@ -27,6 +28,8 @@ const RegisterScreen = ({ navigation }: RegisterProps) => {
     password: "",
   });
 
+  const [visible, setVisible] = useState(false);
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const setToken = useUserStore((v) => v.setAccessToken);
@@ -39,15 +42,16 @@ const RegisterScreen = ({ navigation }: RegisterProps) => {
           setIsLoading(false);
         }, 1500);
         // console.log(response);
-        Toast.show({
-          type: "success",
-          text1: response["message"],
-        });
 
-        setToken(response["access_token"]);
+        setVisible(true);
+        // setToken(response["access_token"]);
       }
     );
   };
+
+  if (visible) {
+    return <VerificationModal {...{ visible, setVisible }} />;
+  }
 
   return (
     <View style={styles.container}>
