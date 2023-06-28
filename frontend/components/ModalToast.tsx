@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { Overlay } from "react-native-elements";
 import { FONTS, assets } from "../constants";
 import { Button } from "react-native-paper";
+import * as Notifications from "expo-notifications";
+import { sendPushNotification } from "../App";
+import { useUserStore } from "../store/userStore";
 
 type Props = {
   visible: boolean;
@@ -10,9 +13,40 @@ type Props = {
   text: string;
   link: string;
   setVisible: (value: boolean) => void;
+  setIsVisible: (value: boolean) => void;
 };
 
-const ModalToast = ({ visible, setVisible, title, text, link }: Props) => {
+const ModalToast = ({
+  visible,
+  setVisible,
+  title,
+  text,
+  link,
+  setIsVisible,
+}: Props) => {
+  const expoPushToken = useUserStore((v) => v.expoPushToken);
+  function randomIntFromInterval(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+
+  const randomNumber = randomIntFromInterval(1000, 9999);
+  const setVerificationCode = useUserStore((v) => v.setVerificationCode);
+
+  const verification = useMemo(() => {
+    setVerificationCode(randomNumber);
+  }, [randomNumber]);
+
+  const handleNotification = () => {
+    sendPushNotification(expoPushToken);
+    Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Verification code",
+        body: `Your verification code is ${verification}`,
+      },
+      trigger: null,
+    });
+  };
+
   return (
     <View>
       <Overlay
@@ -74,7 +108,11 @@ const ModalToast = ({ visible, setVisible, title, text, link }: Props) => {
         </View>
         <Button
           mode="contained"
-          onPress={() => console.log("ok")}
+          onPress={() => {
+            setVisible(false);
+            setIsVisible(true);
+            handleNotification();
+          }}
           style={{
             marginTop: 10,
           }}

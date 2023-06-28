@@ -11,6 +11,7 @@ import Toast from "react-native-toast-message";
 import { Button, Overlay } from "react-native-elements";
 import ModalToast from "../../components/ModalToast";
 import { IconButton } from "react-native-paper";
+import VerificationModal from "../../components/VerificationModal";
 
 type RegisterProps = {
   navigation: any;
@@ -30,6 +31,7 @@ const RegisterScreen = ({ navigation }: RegisterProps) => {
   });
 
   const [visible, setVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [disabled, setDisabled] = useState<boolean>(false);
   const [togglePasswordVisibility, setTogglePasswordVisibility] =
@@ -43,9 +45,11 @@ const RegisterScreen = ({ navigation }: RegisterProps) => {
       (response) => {
         setTimeout(() => {
           setIsLoading(false);
-          setVisible(true);
         }, 1500);
+        console.log(response);
+
         setTmpToken(response["access_token"]);
+        setVisible(true);
       }
     );
 
@@ -73,10 +77,13 @@ const RegisterScreen = ({ navigation }: RegisterProps) => {
       <ModalToast
         visible={visible}
         setVisible={setVisible}
+        setIsVisible={setIsVisible}
         title="Account has been created successfully!"
         text="if you didn’t receive any code,"
         link="click here please!"
       />
+
+      <VerificationModal isVisible={isVisible} />
 
       <Image
         source={assets.authImage}
@@ -125,7 +132,7 @@ const RegisterScreen = ({ navigation }: RegisterProps) => {
             >
               <Icon
                 name={togglePasswordVisibility ? "eye" : "eye-slash"}
-                size={25}
+                size={20}
               ></Icon>
             </TouchableOpacity>
           }
