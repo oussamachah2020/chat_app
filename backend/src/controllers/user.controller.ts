@@ -70,7 +70,6 @@ const login = AsyncHandler(
         .status(400)
         .json({ message: "Enter your informations", status_code: 400 });
     }
-
     const user = await prisma.user.findUnique({
       where: {
         email,
@@ -136,20 +135,17 @@ const getAllUsers = AsyncHandler(
 const verifyUser = AsyncHandler(
   async (req: Request, res: Response): Promise<any> => {
     try {
-      const userId = req.user; // Assuming req.user contains the user's ID
+      const { email } = req.body;
 
-      const updatedUser = await prisma.user.update({
+      await prisma.user.update({
         where: {
-          id: userId,
+          email,
         },
         data: {
           verified: true,
         },
       });
-
-      if (updatedUser) {
-        return res.status(200).json({ message: "Your account is verified!" });
-      }
+      return res.status(200).json({ message: "Your account is verified!" });
     } catch (error) {
       // Handle any errors
       console.error(error);

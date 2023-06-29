@@ -118,18 +118,16 @@ exports.getAllUsers = getAllUsers;
 // this function is for verifying the user by checking if the inserted code is matching the generated one.
 const verifyUser = (0, express_async_handler_1.default)(async (req, res) => {
     try {
-        const userId = req.user; // Assuming req.user contains the user's ID
-        const updatedUser = await prisma.user.update({
+        const { email } = req.body;
+        await prisma.user.update({
             where: {
-                id: userId,
+                email,
             },
             data: {
                 verified: true,
             },
         });
-        if (updatedUser) {
-            return res.status(200).json({ message: "Your account is verified!" });
-        }
+        return res.status(200).json({ message: "Your account is verified!" });
     }
     catch (error) {
         // Handle any errors

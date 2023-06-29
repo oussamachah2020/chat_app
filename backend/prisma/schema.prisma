@@ -18,6 +18,8 @@ model User {
   verified Boolean @default(false)
   messages Message[]
   profile Profile?
+
+  @@unique([id, email])
 }
 
 model Message {
