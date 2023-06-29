@@ -38,6 +38,7 @@ const RegisterScreen = ({ navigation }: RegisterProps) => {
     useState<boolean>(false);
 
   const setTmpToken = useUserStore((v) => v.setTmpToken);
+  const setEmail = useUserStore((v) => v.setEmail);
 
   const handleUserRegistration = () => {
     setIsLoading(true);
@@ -45,11 +46,10 @@ const RegisterScreen = ({ navigation }: RegisterProps) => {
       (response) => {
         setTimeout(() => {
           setIsLoading(false);
+          setEmail(formData.email);
+          setTmpToken(response["access_token"]);
+          setVisible(true);
         }, 1500);
-        console.log(response);
-
-        setTmpToken(response["access_token"]);
-        setVisible(true);
       }
     );
 
@@ -74,16 +74,18 @@ const RegisterScreen = ({ navigation }: RegisterProps) => {
 
   return (
     <View style={styles.container}>
-      <ModalToast
-        visible={visible}
-        setVisible={setVisible}
-        setIsVisible={setIsVisible}
-        title="Account has been created successfully!"
-        text="if you didn’t receive any code,"
-        link="click here please!"
-      />
-
-      <VerificationModal isVisible={isVisible} />
+      {visible ? (
+        <ModalToast
+          visible={visible}
+          setVisible={setVisible}
+          setIsVisible={setIsVisible}
+          title="Account has been created successfully!"
+          text="if you didn’t receive any code,"
+          link="click here please!"
+        />
+      ) : (
+        <VerificationModal isVisible={isVisible} />
+      )}
 
       <Image
         source={assets.authImage}

@@ -13,7 +13,7 @@ type Props = {
 
 function VerificationModal({ isVisible }: Props) {
   const VerificationCode = useUserStore((v) => v.verificationCode);
-  const tmpToken = useUserStore((v) => v.tmpToken);
+  const email = useUserStore((v) => v.email);
   const [code, setCode] = useState(0);
 
   const handleVerification = () => {
@@ -21,11 +21,15 @@ function VerificationModal({ isVisible }: Props) {
 
     if (VerificationCode === code) {
       axios
-        .put("http://192.168.236.222:5000/api/users/verify", {
-          headers: {
-            Authorization: `Bearer ${tmpToken}`,
-          },
-        })
+        .put(
+          "http://192.168.236.222:5000/api/users/verify",
+          { email },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
         .then((response) => {
           console.log(response.data);
         })
