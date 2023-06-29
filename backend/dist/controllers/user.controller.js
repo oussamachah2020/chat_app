@@ -24,7 +24,7 @@ const createUser = (0, express_async_handler_1.default)(async (req, res) => {
             .json({ message: "Enter your informations", status_code: 400 });
     }
     const hashedPassword = await (0, bcryptjs_1.hash)(password, 10);
-    const userExist = await prisma.user.findFirst({
+    const userExist = await prisma.user.findUnique({
         where: {
             email,
         },
@@ -61,7 +61,7 @@ const login = (0, express_async_handler_1.default)(async (req, res) => {
             .status(400)
             .json({ message: "Enter your informations", status_code: 400 });
     }
-    const user = await prisma.user.findFirst({
+    const user = await prisma.user.findUnique({
         where: {
             email,
         },
@@ -89,7 +89,7 @@ const login = (0, express_async_handler_1.default)(async (req, res) => {
 exports.login = login;
 // this function will be called to get the user data by taking a token in the headers
 const getUser = (0, express_async_handler_1.default)(async (req, res) => {
-    const userData = await prisma.user.findFirst({
+    const userData = await prisma.user.findUnique({
         where: {
             id: req.user,
         },
@@ -118,18 +118,16 @@ exports.getAllUsers = getAllUsers;
 // this function is for verifying the user by checking if the inserted code is matching the generated one.
 const verifyUser = (0, express_async_handler_1.default)(async (req, res) => {
     try {
-        const userId = req.user; // Assuming req.user contains the user's ID
-        const updatedUser = await prisma.user.update({
+        const { email } = req.body;
+        await prisma.user.update({
             where: {
-                id: userId,
+                email,
             },
             data: {
                 verified: true,
             },
         });
-        if (updatedUser) {
-            return res.status(200).json({ message: "Your account is verified!" });
-        }
+        return res.status(200).json({ message: "Your account is verified!" });
     }
     catch (error) {
         // Handle any errors
@@ -161,7 +159,7 @@ const uploadImage = (0, express_async_handler_1.default)(async (req, res) => {
 exports.uploadImage = uploadImage;
 const sendPasswordRestorationEmail = (0, express_async_handler_1.default)(async (req, res) => {
     const { email } = req.body;
-    const checkEmail = await prisma.user.findFirst({ where: { email } });
+    const checkEmail = await prisma.user.findUnique({ where: { email } });
     if (!email) {
         return res.status(400).json({ msg: "Please enter your email" });
     }

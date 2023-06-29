@@ -27,7 +27,7 @@ const createUser = AsyncHandler(
 
     const hashedPassword: string = await hash(password, 10);
 
-    const userExist = await prisma.user.findFirst({
+    const userExist = await prisma.user.findUnique({
       where: {
         email,
       },
@@ -70,7 +70,7 @@ const login = AsyncHandler(
         .status(400)
         .json({ message: "Enter your informations", status_code: 400 });
     }
-    const user = await prisma.user.findFirst({
+    const user = await prisma.user.findUnique({
       where: {
         email,
       },
@@ -100,7 +100,7 @@ const login = AsyncHandler(
 // this function will be called to get the user data by taking a token in the headers
 const getUser = AsyncHandler(
   async (req: Request, res: Response): Promise<any> => {
-    const userData = await prisma.user.findFirst({
+    const userData = await prisma.user.findUnique({
       where: {
         id: req.user,
       },
@@ -135,20 +135,17 @@ const getAllUsers = AsyncHandler(
 const verifyUser = AsyncHandler(
   async (req: Request, res: Response): Promise<any> => {
     try {
-      const userId = req.user; // Assuming req.user contains the user's ID
+      const { email } = req.body;
 
-      const updatedUser = await prisma.user.update({
+      await prisma.user.update({
         where: {
-          id: userId,
+          email,
         },
         data: {
           verified: true,
         },
       });
-
-      if (updatedUser) {
-        return res.status(200).json({ message: "Your account is verified!" });
-      }
+      return res.status(200).json({ message: "Your account is verified!" });
     } catch (error) {
       // Handle any errors
       console.error(error);
@@ -187,7 +184,7 @@ const sendPasswordRestorationEmail = AsyncHandler(
   async (req: Request, res: Response): Promise<any> => {
     const { email } = req.body;
 
-    const checkEmail = await prisma.user.findFirst({ where: { email } });
+    const checkEmail = await prisma.user.findUnique({ where: { email } });
 
     if (!email) {
       return res.status(400).json({ msg: "Please enter your email" });
