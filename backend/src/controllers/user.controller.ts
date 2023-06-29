@@ -27,7 +27,7 @@ const createUser = AsyncHandler(
 
     const hashedPassword: string = await hash(password, 10);
 
-    const userExist = await prisma.user.findUnique({
+    const userExist = await prisma.user.findFirst({
       where: {
         email,
       },
@@ -70,8 +70,7 @@ const login = AsyncHandler(
         .status(400)
         .json({ message: "Enter your informations", status_code: 400 });
     }
-
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findFirst({
       where: {
         email,
       },
@@ -101,7 +100,7 @@ const login = AsyncHandler(
 // this function will be called to get the user data by taking a token in the headers
 const getUser = AsyncHandler(
   async (req: Request, res: Response): Promise<any> => {
-    const userData = await prisma.user.findUnique({
+    const userData = await prisma.user.findFirst({
       where: {
         id: req.user,
       },
@@ -188,7 +187,7 @@ const sendPasswordRestorationEmail = AsyncHandler(
   async (req: Request, res: Response): Promise<any> => {
     const { email } = req.body;
 
-    const checkEmail = await prisma.user.findUnique({ where: { email } });
+    const checkEmail = await prisma.user.findFirst({ where: { email } });
 
     if (!email) {
       return res.status(400).json({ msg: "Please enter your email" });
