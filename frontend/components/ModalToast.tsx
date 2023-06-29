@@ -25,23 +25,24 @@ const ModalToast = ({
   setIsVisible,
 }: Props) => {
   const expoPushToken = useUserStore((v) => v.expoPushToken);
-  function randomIntFromInterval(min: number, max: number): number {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  }
-
-  const randomNumber = randomIntFromInterval(1000, 9999);
   const setVerificationCode = useUserStore((v) => v.setVerificationCode);
+  const verificationCode = useUserStore((v) => v.verificationCode);
 
-  const verification = useMemo(() => {
-    setVerificationCode(randomNumber);
-  }, [randomNumber]);
+  const randomCode = useMemo(() => {
+    const random = Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+    return random;
+  }, []);
+
+  useEffect(() => {
+    setVerificationCode(randomCode);
+  }, [randomCode]);
 
   const handleNotification = () => {
     sendPushNotification(expoPushToken);
     Notifications.scheduleNotificationAsync({
       content: {
         title: "Verification code",
-        body: `Your verification code is ${verification}`,
+        body: `Your verification code is ${verificationCode}`,
       },
       trigger: null,
     });

@@ -78,3 +78,28 @@ export const getUserInfo = (accessToken: string) => {
       console.log(err.message);
     });
 };
+
+export const verifyUser = (email: string) => {
+  const url = `${baseUrl}/users/verify`;
+
+  return axios
+    .put(
+      url,
+      { email },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+    .then((response) => {
+      if (response && response.status === 200) {
+        return Promise.resolve(response.status);
+      }
+
+      return Promise.reject(response);
+    })
+    .catch((error) => {
+      console.log(error.message);
+    });
+};
