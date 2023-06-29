@@ -13,16 +13,17 @@ const prisma = new PrismaClient();
   Generate random number between 1000 and 9999
   this number will be used as verification code
 */
-function randomIntFromInterval(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-const randomNumber = randomIntFromInterval(1000, 9999);
 
 //this function is used to create a new user and store it in the database
 const createUser = AsyncHandler(
   async (req: Request, res: Response): Promise<any> => {
     const { fullName, email, password }: userDataType = req.body;
+
+    if (!fullName || !email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Enter your informations", status_code: 400 });
+    }
 
     const hashedPassword: string = await hash(password, 10);
 
@@ -33,7 +34,9 @@ const createUser = AsyncHandler(
     });
 
     if (userExist) {
-      return res.status(409).json({ message: "User already exists" });
+      return res
+        .status(409)
+        .json({ message: "User already exists", status_code: 409 });
     }
 
     const newUser = await prisma.user.create({
@@ -51,6 +54,7 @@ const createUser = AsyncHandler(
       return res.status(201).json({
         message: "User created successfully",
         access_token: generateToken(newUser.id),
+        status_code: 201,
       });
     }
   }
@@ -60,6 +64,12 @@ const createUser = AsyncHandler(
 const login = AsyncHandler(
   async (req: Request, res: Response): Promise<any> => {
     const { email, password }: ILogin = req.body;
+
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Enter your informations", status_code: 400 });
+    }
 
     const user = await prisma.user.findUnique({
       where: {
@@ -125,19 +135,25 @@ const getAllUsers = AsyncHandler(
 // this function is for verifying the user by checking if the inserted code is matching the generated one.
 const verifyUser = AsyncHandler(
   async (req: Request, res: Response): Promise<any> => {
-    const { verificationCode, email } = req.body;
+    try {
+      const userId = req.user; // Assuming req.user contains the user's ID
 
-    if (verificationCode === randomNumber) {
-      await prisma.user.update({
+      const updatedUser = await prisma.user.update({
         where: {
-          email,
+          id: userId,
         },
-        data: { verified: true },
+        data: {
+          verified: true,
+        },
       });
 
-      return res.status(200).json({ message: "Your account is verified !" });
-    } else {
-      return res.status(400).json({ message: "Incorrect code, try again !" });
+      if (updatedUser) {
+        return res.status(200).json({ message: "Your account is verified!" });
+      }
+    } catch (error) {
+      // Handle any errors
+      console.error(error);
+      return res.status(500).json({ message: "Failed to update user." });
     }
   }
 );
@@ -314,7 +330,6 @@ export {
   login,
   getUser,
   verifyUser,
-  randomNumber,
   getAllUsers,
   uploadImage,
   sendPasswordRestorationEmail,

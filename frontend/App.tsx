@@ -8,7 +8,6 @@ import { COLORS, FONTS, SIZES } from "./constants";
 import { SCREENS } from "./types/screens";
 import PasswordRestoration from "./screens/PasswordRestoration";
 import ProfileScreen from "./screens/user/ProfileScreen";
-import HomeScreen from "./screens/Chat/HomeScreen";
 import LoginScreen from "./screens/auth/LoginScreen";
 import RegisterScreen from "./screens/auth/RegisterScreen";
 import NavigationBar from "./components/NavigationBar";
@@ -16,9 +15,10 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useUserStore } from "./store/userStore";
 import { useEffect, useRef, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import SettingsScreen from "./screens/Chat/SettingsScreen";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
+import HomeScreen from "./screens/chat/HomeScreen";
+import SettingsScreen from "./screens/chat/SettingsScreen";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -29,7 +29,7 @@ Notifications.setNotificationHandler({
 });
 
 // Can use this function below OR use Expo's Push Notification Tool from: https://expo.dev/notifications
-async function sendPushNotification(expoPushToken: any) {
+export async function sendPushNotification(expoPushToken: any) {
   const message = {
     to: expoPushToken,
     sound: "default",
@@ -93,12 +93,12 @@ const theme = {
 };
 
 export default function App() {
-  const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
 
   const accessToken = useUserStore((v) => v.accessToken);
+  const setExpoPushToken = useUserStore((v) => v.setExpoPushToken);
   // useEffect(() => {
   //   console.log(accessToken);
   // }, []);
@@ -124,27 +124,6 @@ export default function App() {
       );
       Notifications.removeNotificationSubscription(responseListener.current);
     };
-  }, []);
-
-  useEffect(() => {
-    sendPushNotification(expoPushToken);
-    Notifications.setNotificationHandler({
-      handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: true,
-        shouldSetBadge: false,
-      }),
-    });
-
-    // Second, call the method
-
-    Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Look at that notification",
-        body: "I'm so proud of myself!",
-      },
-      trigger: null,
-    });
   }, []);
 
   const [loaded] = useFonts({
