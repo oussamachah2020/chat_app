@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePassword = exports.sendPasswordRestorationEmail = exports.uploadImage = exports.getAllUsers = exports.randomNumber = exports.verifyUser = exports.getUser = exports.login = exports.createUser = void 0;
+exports.updatePassword = exports.sendPasswordRestorationEmail = exports.uploadImage = exports.getAllUsers = exports.verifyUser = exports.getUser = exports.login = exports.createUser = void 0;
 const client_1 = require("@prisma/client");
 const uuid_1 = require("uuid");
 const bcryptjs_1 = require("bcryptjs");
@@ -15,11 +15,6 @@ const prisma = new client_1.PrismaClient();
   Generate random number between 1000 and 9999
   this number will be used as verification code
 */
-function randomIntFromInterval(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-}
-const randomNumber = randomIntFromInterval(1000, 9999);
-exports.randomNumber = randomNumber;
 //this function is used to create a new user and store it in the database
 const createUser = (0, express_async_handler_1.default)(async (req, res) => {
     const { fullName, email, password } = req.body;
@@ -122,18 +117,24 @@ const getAllUsers = (0, express_async_handler_1.default)(async (req, res) => {
 exports.getAllUsers = getAllUsers;
 // this function is for verifying the user by checking if the inserted code is matching the generated one.
 const verifyUser = (0, express_async_handler_1.default)(async (req, res) => {
-    const { verificationCode, email } = req.body;
-    if (verificationCode === randomNumber) {
-        await prisma.user.update({
+    try {
+        const userId = req.user; // Assuming req.user contains the user's ID
+        const updatedUser = await prisma.user.update({
             where: {
-                email,
+                id: userId,
             },
-            data: { verified: true },
+            data: {
+                verified: true,
+            },
         });
-        return res.status(200).json({ message: "Your account is verified !" });
+        if (updatedUser) {
+            return res.status(200).json({ message: "Your account is verified!" });
+        }
     }
-    else {
-        return res.status(400).json({ message: "Incorrect code, try again !" });
+    catch (error) {
+        // Handle any errors
+        console.error(error);
+        return res.status(500).json({ message: "Failed to update user." });
     }
 });
 exports.verifyUser = verifyUser;

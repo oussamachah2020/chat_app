@@ -13,11 +13,6 @@ const prisma = new PrismaClient();
   Generate random number between 1000 and 9999
   this number will be used as verification code
 */
-function randomIntFromInterval(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-const randomNumber = randomIntFromInterval(1000, 9999);
 
 //this function is used to create a new user and store it in the database
 const createUser = AsyncHandler(
@@ -140,19 +135,25 @@ const getAllUsers = AsyncHandler(
 // this function is for verifying the user by checking if the inserted code is matching the generated one.
 const verifyUser = AsyncHandler(
   async (req: Request, res: Response): Promise<any> => {
-    const { verificationCode, email } = req.body;
+    try {
+      const userId = req.user; // Assuming req.user contains the user's ID
 
-    if (verificationCode === randomNumber) {
-      await prisma.user.update({
+      const updatedUser = await prisma.user.update({
         where: {
-          email,
+          id: userId,
         },
-        data: { verified: true },
+        data: {
+          verified: true,
+        },
       });
 
-      return res.status(200).json({ message: "Your account is verified !" });
-    } else {
-      return res.status(400).json({ message: "Incorrect code, try again !" });
+      if (updatedUser) {
+        return res.status(200).json({ message: "Your account is verified!" });
+      }
+    } catch (error) {
+      // Handle any errors
+      console.error(error);
+      return res.status(500).json({ message: "Failed to update user." });
     }
   }
 );
@@ -329,7 +330,6 @@ export {
   login,
   getUser,
   verifyUser,
-  randomNumber,
   getAllUsers,
   uploadImage,
   sendPasswordRestorationEmail,
