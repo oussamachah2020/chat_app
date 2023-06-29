@@ -6,6 +6,7 @@ import { FONTS } from "../constants";
 import { Icon, Input, Overlay } from "react-native-elements";
 import { useUserStore } from "../store/userStore";
 import axios from "axios";
+import { verifyUser } from "../api/loaders";
 
 type Props = {
   isVisible: boolean;
@@ -14,28 +15,19 @@ type Props = {
 function VerificationModal({ isVisible }: Props) {
   const VerificationCode = useUserStore((v) => v.verificationCode);
   const email = useUserStore((v) => v.email);
+  const setAccessToken = useUserStore((v) => v.setAccessToken);
+  const tmpToken = useUserStore((v) => v.tmpToken);
   const [code, setCode] = useState(0);
 
   const handleVerification = () => {
     console.log(code, VerificationCode);
 
     if (VerificationCode === code) {
-      axios
-        .put(
-          "http://192.168.236.222:5000/api/users/verify",
-          { email },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        .then((response) => {
-          console.log(response.data);
-        })
-        .catch((error) => {
-          console.log(error.message);
-        });
+      verifyUser(email).then((response) => {
+        if (response) {
+          setAccessToken(tmpToken);
+        }
+      });
     }
   };
 

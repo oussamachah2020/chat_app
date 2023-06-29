@@ -22,6 +22,7 @@ import ProfileScreen from "../user/ProfileScreen";
 import { useUserStore } from "../../store/userStore";
 import { getUserInfo } from "../../api/loaders";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import ModalToast from "../../components/ModalToast";
 // import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 type HomeProps = {
@@ -30,7 +31,7 @@ type HomeProps = {
 
 const HomeScreen = ({ navigation }: HomeProps) => {
   const [open, setOpen] = React.useState<boolean>(false);
-  const onStateChange = () => setOpen(!open);
+  // const onStateChange = () => setOpen(!open);
   const accessToken = useUserStore((v) => v.accessToken);
   const fullName = useUserStore((v) => v.fullName);
   const setEmail = useUserStore((v) => v.setEmail);
@@ -43,11 +44,21 @@ const HomeScreen = ({ navigation }: HomeProps) => {
     });
   }, [accessToken]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      setOpen(false);
+    }, 2000);
+  }, [open]);
+
   const Tab = createBottomTabNavigator();
 
   return (
     <View style={styles.container}>
-      <Toast />
+      <ModalToast
+        visible={open}
+        title="Verification Done!"
+        text="Your account is verified, Have Fun!"
+      />
 
       <View style={styles.header}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
