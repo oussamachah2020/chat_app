@@ -1,13 +1,13 @@
 import axios from "axios";
-import { Platform } from "react-native";
+import { toastStore } from "../store/toastStore";
 
 const baseUrl = "http://192.168.236.222:5000/api";
 
-export const userLogin = (email: string, password: string) => {
+export const userLogin = async (email: string, password: string) => {
   const url = `${baseUrl}/users/login`;
 
-  return axios
-    .post(
+  try {
+    const response = await axios.post(
       url,
       { email, password },
       {
@@ -15,20 +15,25 @@ export const userLogin = (email: string, password: string) => {
           "Content-Type": "application/json",
         },
       }
-    )
-    .then((response) => {
-      if (response && response.status === 200) {
-        return Promise.resolve(response.data);
-      }
+    );
 
-      return Promise.reject();
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
+    if (response && response.status === 200) {
+      // toastStore
+      //   .getState()
+      //   .showToast("valid", "Authentication", response.data["message"]);
+      return Promise.resolve(response.data);
+    }
+
+    // toastStore
+    //   .getState()
+    //   .showToast("error", "Authentication", response.data["message"]);
+    return Promise.reject();
+  } catch (err) {
+    console.log(err);
+  }
 };
 
-export const userRegistration = (
+export const userRegistration = async (
   fullName: string,
   email: string,
   password: string
@@ -58,7 +63,7 @@ export const userRegistration = (
     });
 };
 
-export const getUserInfo = (accessToken: string) => {
+export const getUserInfo = async (accessToken: string) => {
   const url = `${baseUrl}/users/`;
 
   return axios
@@ -79,7 +84,7 @@ export const getUserInfo = (accessToken: string) => {
     });
 };
 
-export const verifyUser = (email: string) => {
+export const verifyUser = async (email: string) => {
   const url = `${baseUrl}/users/verify`;
 
   return axios

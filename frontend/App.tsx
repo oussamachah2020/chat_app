@@ -19,6 +19,8 @@ import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import HomeScreen from "./screens/chat/HomeScreen";
 import SettingsScreen from "./screens/chat/SettingsScreen";
+import Toast from "./components/Toast";
+import { useToastStore } from "./store/toastStore";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -99,9 +101,6 @@ export default function App() {
 
   const accessToken = useUserStore((v) => v.accessToken);
   const setExpoPushToken = useUserStore((v) => v.setExpoPushToken);
-  // useEffect(() => {
-  //   console.log(accessToken);
-  // }, []);
 
   useEffect(() => {
     registerForPushNotificationsAsync().then((token) =>

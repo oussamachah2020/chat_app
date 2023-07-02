@@ -1,17 +1,17 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { assets, COLORS, SIZES, FONTS } from "../../constants";
 import { Input } from "@rneui/themed";
-// import { Button } from "@rneui/base";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { SCREENS } from "../../types/screens";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { userLogin } from "../../api/loaders";
 import { useUserStore } from "../../store/userStore";
-// import { Button } from "react-native-paper";
 import Loader from "../../components/Loader";
 import { Button } from "@rneui/base";
 import { signIn } from "../../firebase";
+import Toast from "../../components/Toast";
+import { toastStore } from "../../store/toastStore";
 
 type Props = {
   navigation: any;
@@ -29,21 +29,34 @@ const LoginScreen = ({ navigation }: Props) => {
   });
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [disabled, setDisabled] = useState<boolean>(false);
 
   const setToken = useUserStore((v) => v.setAccessToken);
+  const isVisible = toastStore((v) => v.isVisible);
 
   const handleUserLogin = () => {
     setIsLoading(true);
     userLogin(formData.email, formData.password).then((response) => {
       setTimeout(() => {
         setIsLoading(false);
-      }, 1500);
+      }, 500);
+
+      console.log("token => ", response.access_token);
       setToken(response.access_token);
     });
   };
 
+  useEffect(() => {
+    if (formData.email === "" || formData.password === "") {
+      setDisabled(true);
+    } else {
+      setDisabled(false);
+    }
+  }, [disabled, formData]);
+
   return (
     <View style={styles.container}>
+      {isVisible && <Toast />}
       <View style={{ alignItems: "center" }}>
         <Image source={assets.authImage} resizeMode="contain" />
       </View>
@@ -104,8 +117,9 @@ const LoginScreen = ({ navigation }: Props) => {
             borderRadius: 10,
             height: 50,
             justifyContent: "center",
-            backgroundColor: COLORS.primary,
+            backgroundColor: disabled ? "#7e7e7e" : COLORS.primary,
           }}
+          disabled={disabled}
           onPress={handleUserLogin}
         >
           {isLoading ? (

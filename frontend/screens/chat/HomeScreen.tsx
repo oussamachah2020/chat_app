@@ -30,8 +30,6 @@ type HomeProps = {
 };
 
 const HomeScreen = ({ navigation }: HomeProps) => {
-  const [open, setOpen] = React.useState<boolean>(false);
-  // const onStateChange = () => setOpen(!open);
   const accessToken = useUserStore((v) => v.accessToken);
   const fullName = useUserStore((v) => v.fullName);
   const setEmail = useUserStore((v) => v.setEmail);
@@ -44,22 +42,8 @@ const HomeScreen = ({ navigation }: HomeProps) => {
     });
   }, [accessToken]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setOpen(false);
-    }, 2000);
-  }, [open]);
-
-  const Tab = createBottomTabNavigator();
-
   return (
     <View style={styles.container}>
-      <ModalToast
-        visible={open}
-        title="Verification Done!"
-        text="Your account is verified, Have Fun!"
-      />
-
       <View style={styles.header}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
           <Image source={assets.ProfilePic} alt="profile_pic" />
