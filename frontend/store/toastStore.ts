@@ -5,11 +5,15 @@ interface IToast {
   type: string;
   title: string;
   text: string;
+  setVisible: (isVisible: boolean) => void;
   showToast: (type: string, title: string, text: string) => void;
 }
 
-export const toastStore = create<IToast>((set) => ({
+const toastStore = create<IToast>((set) => ({
   isVisible: false,
+  setVisible: (isVisible: boolean) => {
+    set((state) => ({ isVisible }));
+  },
   type: "error",
   title: "Authentication",
   text: "Incorrect email or password",
@@ -24,6 +28,8 @@ export const toastStore = create<IToast>((set) => ({
 
     setTimeout(() => {
       set((state) => ({ isVisible: false }));
-    }, 1500);
+    }, 2000);
   },
 }));
+
+export default toastStore;

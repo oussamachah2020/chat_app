@@ -19,8 +19,8 @@ import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import HomeScreen from "./screens/chat/HomeScreen";
 import SettingsScreen from "./screens/chat/SettingsScreen";
-import Toast from "./components/Toast";
-import { useToastStore } from "./store/toastStore";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
+import toastStore from "./store/toastStore";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -96,6 +96,7 @@ const theme = {
 
 export default function App() {
   const [notification, setNotification] = useState(false);
+  const { isVisible } = toastStore();
   const notificationListener = useRef();
   const responseListener = useRef();
 

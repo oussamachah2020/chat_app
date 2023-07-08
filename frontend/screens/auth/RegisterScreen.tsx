@@ -42,16 +42,19 @@ const RegisterScreen = ({ navigation }: RegisterProps) => {
 
   const handleUserRegistration = () => {
     setIsLoading(true);
-    userRegistration(formData.fullName, formData.email, formData.password).then(
-      (response) => {
+    userRegistration(formData.fullName, formData.email, formData.password)
+      .then((response) => {
         setTimeout(() => {
           setIsLoading(false);
-          setEmail(formData.email);
-          setTmpToken(response["access_token"]);
-          setVisible(true);
-        }, 1500);
-      }
-    );
+        }, 200);
+
+        setEmail(formData.email);
+        setTmpToken(response["access_token"]);
+        setVisible(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
     setFormData({
       fullName: "",

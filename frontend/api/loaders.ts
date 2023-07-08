@@ -1,33 +1,33 @@
 import axios from "axios";
-import { toastStore } from "../store/toastStore";
+import toastStore from "../store/toastStore";
 
-const baseUrl = "http://192.168.236.222:5000/api";
+const baseUrl = "http://192.168.67.222:5000/api";
 
 export const userLogin = async (email: string, password: string) => {
   const url = `${baseUrl}/users/login`;
 
   try {
-    const response = await axios.post(
-      url,
-      { email, password },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    return await axios
+      .post(
+        url,
+        { email, password },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        if (response && response.status === 200) {
+          console.log(response.data);
+          toastStore
+            .getState()
+            .showToast("valid", "Authentication", response.data["message"]);
+          return Promise.resolve(response.data);
+        }
 
-    if (response && response.status === 200) {
-      // toastStore
-      //   .getState()
-      //   .showToast("valid", "Authentication", response.data["message"]);
-      return Promise.resolve(response.data);
-    }
-
-    // toastStore
-    //   .getState()
-    //   .showToast("error", "Authentication", response.data["message"]);
-    return Promise.reject();
+        return Promise.reject();
+      });
   } catch (err) {
     console.log(err);
   }
@@ -74,6 +74,9 @@ export const getUserInfo = async (accessToken: string) => {
     })
     .then((response) => {
       if (response && response.status === 200) {
+        toastStore
+          .getState()
+          .showToast("valid", "Authentication", "User logged in successfully");
         return Promise.resolve(response.data);
       }
 

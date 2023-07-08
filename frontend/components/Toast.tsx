@@ -1,12 +1,12 @@
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { FONTS, SHADOWS, assets } from "../constants";
-import { toastStore } from "../store/toastStore";
+import toastStore from "../store/toastStore";
 
 type ToastProps = {};
 
 function Toast({}: ToastProps) {
-  const { type, title, text } = toastStore();
+  const { type, title, text, setVisible } = toastStore();
 
   return (
     <View style={styles.container}>
@@ -16,7 +16,10 @@ function Toast({}: ToastProps) {
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.message}>{text}</Text>
       </View>
-      <TouchableOpacity>
+      <TouchableOpacity
+        style={styles.closeBtn}
+        onPress={() => setVisible(false)}
+      >
         <Image source={assets.Close} />
       </TouchableOpacity>
     </View>
@@ -34,12 +37,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 31,
     borderRadius: 10,
     padding: 15,
-    ...SHADOWS.medium,
+    // ...SHADOWS.medium,
     position: "absolute",
     zIndex: 10,
-    top: -20,
+    top: 40,
     right: 0,
     left: 0,
+    elevation: 10,
   },
   contentContainer: {
     justifyContent: "center",
@@ -52,5 +56,9 @@ const styles = StyleSheet.create({
   message: {
     fontSize: 14,
     fontFamily: FONTS.medium,
+  },
+  closeBtn: {
+    position: "relative",
+    left: 30,
   },
 });
