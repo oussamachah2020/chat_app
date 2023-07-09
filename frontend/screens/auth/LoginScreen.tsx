@@ -12,6 +12,8 @@ import { Button } from "@rneui/base";
 import { signIn } from "../../firebase";
 import Toast from "../../components/Toast";
 import toastStore from "../../store/toastStore";
+import axios from "axios";
+import { useMutation } from "react-query";
 
 type Props = {
   navigation: any;
@@ -38,21 +40,16 @@ const LoginScreen = ({ navigation }: Props) => {
   const isVisible = toastStore((v) => v.isVisible);
 
   const handleUserLogin = () => {
-    setIsLoading(true);
-    userLogin(formData.email, formData.password).then((response) => {
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 500);
+    console.log("hit");
+    userLogin(formData)
+      .then((result: any) => {
+        // console.log(result.data.access_token);
 
-      if (response) {
-        setToken(response.access_token);
-        console.log(response);
-      } else {
-        toastStore
-          .getState()
-          .showToast("error", "Authentication", "Incorrect Informations");
-      }
-    });
+        setToken(result.data.access_token);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   useEffect(() => {

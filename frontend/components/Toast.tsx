@@ -59,6 +59,6 @@ const styles = StyleSheet.create({
   },
   closeBtn: {
     position: "relative",
-    left: 30,
+    left: 70,
   },
 });

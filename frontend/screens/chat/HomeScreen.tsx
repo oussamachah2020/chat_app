@@ -13,16 +13,12 @@ import { FlashList } from "@shopify/flash-list";
 import { chats, users } from "../../constants/defaultData";
 import NewChats from "../../components/NewChats";
 import { Badge } from "react-native-paper";
-// import { FAB, Portal, PaperProvider } from "react-native-paper";
-// import { NavigationContainer } from "@react-navigation/native";
-// import { SCREENS } from "../../types/screens";
-// import NavigationBar from "../../components/NavigationBar";
-// import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-// import ProfileScreen from "../user/ProfileScreen";
+
 import { useUserStore } from "../../store/userStore";
-import { getUserInfo } from "../../api/loaders";
+// import { getUserInfo } from "../../api/loaders";
 import toastStore from "../../store/toastStore";
 import Toast from "../../components/Toast";
+import { getUserInfo } from "../../api/loaders";
 
 type HomeProps = {
   navigation: any;
@@ -30,13 +26,14 @@ type HomeProps = {
 
 const HomeScreen = ({ navigation }: HomeProps) => {
   const { accessToken, fullName, setEmail, setFullName } = useUserStore();
-
   const isVisible = toastStore((v) => v.isVisible);
 
   useEffect(() => {
-    getUserInfo(accessToken).then((response) => {
-      setFullName(response["fullName"]);
-      setEmail(response["email"]);
+    console.log(accessToken);
+
+    getUserInfo(accessToken).then((result: any) => {
+      setFullName(result.data.fullName);
+      setEmail(result.data.email);
     });
   }, [accessToken]);
 

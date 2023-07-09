@@ -1,113 +1,87 @@
-import axios from "axios";
 import toastStore from "../store/toastStore";
+import ApiManager from "./ApiManager";
 
-const baseUrl = "http://192.168.67.222:5000/api";
-
-export const userLogin = async (email: string, password: string) => {
-  const url = `${baseUrl}/users/login`;
-
+export const userLogin = async (data: any) => {
   try {
-    return await axios
-      .post(
-        url,
-        { email, password },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-      .then((response) => {
-        if (response && response.status === 200) {
-          console.log(response.data);
-          toastStore
-            .getState()
-            .showToast("valid", "Authentication", response.data["message"]);
-          return Promise.resolve(response.data);
-        }
+    const result = await ApiManager("/users/login", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: data,
+    });
 
-        return Promise.reject();
-      });
-  } catch (err) {
-    console.log(err);
+    if (result.status === 200) {
+      toastStore
+        .getState()
+        .showToast("valid", "Authentication", result.data.message);
+      return result;
+    }
+  } catch (error) {
+    toastStore
+      .getState()
+      .showToast("error", "Authentication", "Incorrect information");
+    return error;
   }
 };
 
-export const userRegistration = async (
-  fullName: string,
-  email: string,
-  password: string
-) => {
-  const url = `${baseUrl}/users/create`;
-
-  return axios
-    .post(
-      url,
-      { fullName, email, password },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-    .then((response) => {
-      if (response && response.status === 201) {
-        console.log(response.data);
-        return Promise.resolve(response.data);
-      }
-
-      return Promise.reject();
-    })
-    .catch((err) => {
-      console.log(err.message);
+export const getUserInfo = async (token: string) => {
+  try {
+    const result = await ApiManager("/users/", {
+      method: "get",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
     });
+
+    if (result.status === 200) {
+      toastStore
+        .getState()
+        .showToast("valid", "Authentication", result.data.message);
+      return result;
+    }
+  } catch (error) {
+    return error;
+  }
 };
 
-export const getUserInfo = async (accessToken: string) => {
-  const url = `${baseUrl}/users/`;
-
-  return axios
-    .get(url, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-    .then((response) => {
-      if (response && response.status === 200) {
-        toastStore
-          .getState()
-          .showToast("valid", "Authentication", "User logged in successfully");
-        return Promise.resolve(response.data);
-      }
-
-      return Promise.reject(response);
-    })
-    .catch((err) => {
-      console.log(err.message);
+export const createUser = async (data: {
+  fullName: string;
+  email: string;
+  password: string;
+}) => {
+  try {
+    const result = await ApiManager("/users/create", {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      data: data,
     });
+
+    if (result.status === 201) {
+      toastStore
+        .getState()
+        .showToast("valid", "Authentication", result.data.message);
+      return result;
+    }
+  } catch (error) {
+    return error;
+  }
 };
 
 export const verifyUser = async (email: string) => {
-  const url = `${baseUrl}/users/verify`;
-
-  return axios
-    .put(
-      url,
-      { email },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-    .then((response) => {
-      if (response && response.status === 200) {
-        return Promise.resolve(response.status);
-      }
-
-      return Promise.reject(response);
-    })
-    .catch((error) => {
-      console.log(error.message);
+  try {
+    const result = await ApiManager("/users/verify", {
+      method: "put",
+      data: { email },
     });
+
+    if (result.status === 201) {
+      toastStore
+        .getState()
+        .showToast("valid", "Authentication", result.data.message);
+      return result;
+    }
+  } catch (error) {
+    return error;
+  }
 };

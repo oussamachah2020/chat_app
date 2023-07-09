@@ -22,10 +22,8 @@ function VerificationModal({ isVisible }: Props) {
     console.log(code, VerificationCode);
 
     if (VerificationCode === code) {
-      verifyUser(email).then((response) => {
-        if (response) {
-          setAccessToken(tmpToken);
-        }
+      verifyUser(email).then((result) => {
+        setAccessToken(tmpToken);
       });
     }
   };
