@@ -5,7 +5,6 @@ import { Button } from "react-native-paper";
 import { FONTS } from "../constants";
 import { Icon, Input, Overlay } from "react-native-elements";
 import { useUserStore } from "../store/userStore";
-import axios from "axios";
 import { verifyUser } from "../api/loaders";
 
 type Props = {
@@ -23,10 +22,8 @@ function VerificationModal({ isVisible }: Props) {
     console.log(code, VerificationCode);
 
     if (VerificationCode === code) {
-      verifyUser(email).then((response) => {
-        if (response) {
-          setAccessToken(tmpToken);
-        }
+      verifyUser(email).then((result) => {
+        setAccessToken(tmpToken);
       });
     }
   };

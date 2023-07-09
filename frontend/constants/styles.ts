@@ -1,6 +1,7 @@
 export const FONTS = {
   medium: "PoppinsMedium",
   regular: "PoppinsRegular",
+  semiBold: "PoppinsSemiBold",
   bold: "PoppinsBold",
 
   RobotoMedium: "RobotoMedium",

@@ -8,6 +8,9 @@ import State from "../assets/images/state.png";
 import FullProfilePic from "../assets/images/fullPic.png";
 import CameraIcon from "../assets/images/camera.png";
 import Check from "../assets/images/Checkmark.png";
+import Correct from "../assets/icons/Correct.png";
+import Wrong from "../assets/icons/wrong.png";
+import Close from "../assets/icons/Close.png";
 
 export default {
   phone,
@@ -20,4 +23,7 @@ export default {
   FullProfilePic,
   CameraIcon,
   Check,
+  Correct,
+  Wrong,
+  Close,
 };

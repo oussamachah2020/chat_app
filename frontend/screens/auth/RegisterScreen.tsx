@@ -5,13 +5,14 @@ import { Input } from "@rneui/themed";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { SCREENS } from "../../types/screens";
 import { useUserStore } from "../../store/userStore";
-import { userRegistration } from "../../api/loaders";
+// import { userRegistration } from "../../api/loaders";
 import Loader from "../../components/Loader";
 import Toast from "react-native-toast-message";
 import { Button, Overlay } from "react-native-elements";
 import ModalToast from "../../components/ModalToast";
 import { IconButton } from "react-native-paper";
 import VerificationModal from "../../components/VerificationModal";
+import { createUser } from "../../api/loaders";
 
 type RegisterProps = {
   navigation: any;
@@ -41,17 +42,21 @@ const RegisterScreen = ({ navigation }: RegisterProps) => {
   const setEmail = useUserStore((v) => v.setEmail);
 
   const handleUserRegistration = () => {
+    console.log(formData);
+
     setIsLoading(true);
-    userRegistration(formData.fullName, formData.email, formData.password).then(
-      (response) => {
+    createUser(formData)
+      .then((result) => {
         setTimeout(() => {
           setIsLoading(false);
-          setEmail(formData.email);
-          setTmpToken(response["access_token"]);
-          setVisible(true);
-        }, 1500);
-      }
-    );
+        }, 200);
+        setEmail(formData.email);
+        setTmpToken(result.data.access_token);
+        setVisible(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
     setFormData({
       fullName: "",

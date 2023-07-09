@@ -7,6 +7,8 @@ export interface userState {
   fullName: string;
   expoPushToken: string;
   verificationCode: number;
+  showToast: boolean;
+  setShowToast: (showToast: boolean) => void;
   setAccessToken: (accessToken: string) => void;
   setTmpToken: (tmpToken: string) => void;
   setEmail: (email: string) => void;
@@ -22,6 +24,8 @@ export const useUserStore = create<userState>((set) => ({
   fullName: "",
   expoPushToken: "",
   verificationCode: 0,
+  showToast: false,
+  setShowToast: (showToast: boolean) => set(() => ({ showToast })),
   setVerificationCode: (verificationCode: number) =>
     set(() => ({ verificationCode })),
   setAccessToken: (accessToken: string) =>

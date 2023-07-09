@@ -13,140 +13,121 @@ import { FlashList } from "@shopify/flash-list";
 import { chats, users } from "../../constants/defaultData";
 import NewChats from "../../components/NewChats";
 import { Badge } from "react-native-paper";
-import { FAB, Portal, PaperProvider } from "react-native-paper";
-import { NavigationContainer } from "@react-navigation/native";
-import { SCREENS } from "../../types/screens";
-import NavigationBar from "../../components/NavigationBar";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import ProfileScreen from "../user/ProfileScreen";
+
 import { useUserStore } from "../../store/userStore";
+// import { getUserInfo } from "../../api/loaders";
+import toastStore from "../../store/toastStore";
+import Toast from "../../components/Toast";
 import { getUserInfo } from "../../api/loaders";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
-import ModalToast from "../../components/ModalToast";
-// import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 type HomeProps = {
   navigation: any;
 };
 
 const HomeScreen = ({ navigation }: HomeProps) => {
-  const [open, setOpen] = React.useState<boolean>(false);
-  // const onStateChange = () => setOpen(!open);
-  const accessToken = useUserStore((v) => v.accessToken);
-  const fullName = useUserStore((v) => v.fullName);
-  const setEmail = useUserStore((v) => v.setEmail);
-  const setFullName = useUserStore((v) => v.setFullName);
+  const { accessToken, fullName, setEmail, setFullName } = useUserStore();
+  const isVisible = toastStore((v) => v.isVisible);
 
   useEffect(() => {
-    getUserInfo(accessToken).then((response) => {
-      setFullName(response["fullName"]);
-      setEmail(response["email"]);
+    console.log(accessToken);
+
+    getUserInfo(accessToken).then((result: any) => {
+      setFullName(result.data.fullName);
+      setEmail(result.data.email);
     });
   }, [accessToken]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setOpen(false);
-    }, 2000);
-  }, [open]);
-
-  const Tab = createBottomTabNavigator();
-
   return (
-    <View style={styles.container}>
-      <ModalToast
-        visible={open}
-        title="Verification Done!"
-        text="Your account is verified, Have Fun!"
-      />
+    <>
+      {isVisible && <Toast />}
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+            <Image source={assets.ProfilePic} alt="profile_pic" />
+            <Text
+              style={{
+                fontFamily: FONTS.medium,
+                fontSize: 14,
+              }}
+            >
+              Hello, {fullName} !
+            </Text>
+          </View>
+          <View style={{ position: "relative" }}>
+            <TouchableOpacity>
+              <Image
+                source={assets.Bell}
+                alt="profile_pic"
+                style={{
+                  width: 30,
+                  height: 30,
+                }}
+              />
+              <View style={styles.notificationsCounterContainer}>
+                <Badge
+                  style={{
+                    backgroundColor: "#E84F4F",
+                  }}
+                >
+                  1
+                </Badge>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
 
-      <View style={styles.header}>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-          <Image source={assets.ProfilePic} alt="profile_pic" />
+        <View
+          style={{
+            flexDirection: "row",
+            marginTop: 40,
+            marginLeft: 20,
+            marginBottom: 15,
+          }}
+        >
           <Text
             style={{
-              fontFamily: FONTS.medium,
-              fontSize: 14,
+              fontFamily: FONTS.RobotoMedium,
+              fontSize: 16,
             }}
           >
-            Hello, {fullName} !
+            Contact:
+          </Text>
+          <Text
+            style={{
+              marginLeft: 10,
+              fontFamily: FONTS.RobotoMedium,
+              fontSize: 16,
+            }}
+          >
+            48 peoples
           </Text>
         </View>
-        <View style={{ position: "relative" }}>
-          <TouchableOpacity>
-            <Image
-              source={assets.Bell}
-              alt="profile_pic"
-              style={{
-                width: 30,
-                height: 30,
-              }}
-            />
-            <View style={styles.notificationsCounterContainer}>
-              <Badge
-                style={{
-                  backgroundColor: "#E84F4F",
-                }}
-              >
-                1
-              </Badge>
-            </View>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <View
-        style={{
-          flexDirection: "row",
-          marginTop: 40,
-          marginLeft: 20,
-          marginBottom: 15,
-        }}
-      >
+        <FlashList
+          data={users}
+          renderItem={({ item }) => <UsersList user={item} />}
+          estimatedItemSize={50}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+        />
         <Text
           style={{
+            fontWeight: "700",
             fontFamily: FONTS.RobotoMedium,
             fontSize: 16,
+            marginTop: 40,
+            marginLeft: 20,
           }}
         >
-          Contact:
+          Conversations
         </Text>
-        <Text
-          style={{
-            marginLeft: 10,
-            fontFamily: FONTS.RobotoMedium,
-            fontSize: 16,
-          }}
-        >
-          48 peoples
-        </Text>
-      </View>
-      <FlashList
-        data={users}
-        renderItem={({ item }) => <UsersList user={item} />}
-        estimatedItemSize={50}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-      />
-      <Text
-        style={{
-          fontWeight: "700",
-          fontFamily: FONTS.RobotoMedium,
-          fontSize: 16,
-          marginTop: 40,
-          marginLeft: 20,
-        }}
-      >
-        Conversations
-      </Text>
-      <FlashList
-        data={chats}
-        renderItem={({ item }) => <NewChats chat={item} />}
-        estimatedItemSize={100}
-        horizontal={false}
-      />
+        <FlashList
+          data={chats}
+          renderItem={({ item }) => <NewChats chat={item} />}
+          estimatedItemSize={100}
+          horizontal={false}
+        />
 
-      {/* <Portal>
+        {/* <Portal>
         <FAB.Group
           open={open}
           visible
@@ -172,7 +153,8 @@ const HomeScreen = ({ navigation }: HomeProps) => {
           variant="primary"
         />
       </Portal> */}
-    </View>
+      </View>
+    </>
   );
 };
 
